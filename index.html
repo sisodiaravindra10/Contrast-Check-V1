@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="color-scheme" content="dark" />
+  <title>Contrast Check / A case for the middle</title>
+  <meta name="description" content="Six WCAG-AAA dark mode themes calibrated to survive low device brightness. A pitch for the dark mode between dark and light." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400;1,700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ======================================================================
+       SHELL TOKENS / warm near-black sepia charcoal
+       The tool itself uses one of the middle-ground themes it argues for.
+       ====================================================================== */
+    :root {
+      --shell-bg:           oklch(11% 0.012 55);
+      --shell-bg-deep:      oklch(7%  0.010 55);
+      --shell-bg-elevated:  oklch(15% 0.014 55);
+      --shell-bg-raised:    oklch(19% 0.014 55);
+      --shell-fg:           oklch(91% 0.018 70);
+      --shell-fg-2:         oklch(72% 0.022 70);
+      --shell-fg-3:         oklch(54% 0.022 70);
+      --shell-border:       oklch(22% 0.015 55);
+      --shell-border-strong:oklch(32% 0.018 55);
+      --shell-accent:       oklch(76% 0.14 70);
+      --shell-accent-soft:  oklch(60% 0.10 70);
+      --shell-success:      oklch(74% 0.13 145);
+      --shell-danger:       oklch(66% 0.18 25);
+
+      --sp-1: 0.25rem;  --sp-2: 0.5rem;   --sp-3: 0.75rem;
+      --sp-4: 1rem;     --sp-5: 1.5rem;   --sp-6: 2rem;
+      --sp-7: 3rem;     --sp-8: 4rem;     --sp-9: 6rem;
+      --sp-10: 8rem;
+
+      --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+      --font-body:    'Atkinson Hyperlegible', system-ui, sans-serif;
+      --font-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 18px;
+
+      --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+      --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      background: var(--shell-bg);
+      color: var(--shell-fg);
+      font-family: var(--font-body);
+      font-size: 17px;
+      line-height: 1.55;
+      letter-spacing: 0.005em;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-kerning: normal;
+      overflow-x: hidden;
+    }
+
+    /* Atkinson Hyperlegible on dark needs slight weight compensation */
+    body { font-weight: 400; }
+
+    a { color: inherit; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+
+    .page {
+      max-width: 1320px;
+      margin: 0 auto;
+      padding: 0 var(--sp-5);
+    }
+    @media (min-width: 768px) {
+      .page { padding: 0 var(--sp-7); }
+    }
+
+    /* ======================================================================
+       TOPBAR
+       ====================================================================== */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--sp-5) 0;
+      border-bottom: 1px solid var(--shell-border);
+      gap: var(--sp-5);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.05rem;
+      letter-spacing: -0.01em;
+    }
+    .brand-mark {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 0 0 1px var(--shell-border-strong);
+    }
+    .brand-mark span:nth-child(1) { background: oklch(98% 0 0); }
+    .brand-mark span:nth-child(2) { background: var(--shell-accent); }
+    .brand-mark span:nth-child(3) { background: oklch(20% 0.01 55); }
+    .brand-mark span:nth-child(4) { background: oklch(0% 0 0); }
+
+    .topbar-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-5);
+      font-size: 0.78rem;
+      color: var(--shell-fg-3);
+      font-family: var(--font-mono);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .topbar-meta .dot {
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--shell-success);
+      box-shadow: 0 0 8px var(--shell-success);
+    }
+    @media (max-width: 640px) {
+      .topbar-meta span:not(.dot-wrap) { display: none; }
+    }
+
+    /* ======================================================================
+       HERO
+       ====================================================================== */
+    .hero {
+      padding: clamp(var(--sp-8), 12vw, var(--sp-10)) 0 clamp(var(--sp-7), 8vw, var(--sp-9));
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-6);
+      position: relative;
+    }
+    @media (min-width: 960px) {
+      .hero {
+        grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+        gap: var(--sp-8);
+        align-items: end;
+      }
+    }
+
+    .eyebrow {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--shell-fg-3);
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+    }
+    .eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--shell-fg-3);
+    }
+    .eyebrow b {
+      font-weight: 400;
+      color: var(--shell-accent);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 7.5vw + 0.5rem, 6.25rem);
+      font-weight: 600;
+      font-variation-settings: "wdth" 100, "opsz" 96;
+      letter-spacing: -0.035em;
+      line-height: 0.94;
+      margin: var(--sp-5) 0 0;
+      text-wrap: balance;
+    }
+    .hero h1 .ink-light { color: var(--shell-fg-3); }
+    .hero h1 em {
+      font-style: italic;
+      font-weight: 500;
+      color: var(--shell-accent);
+    }
+
+    .hero-side {
+      max-width: 38ch;
+      font-size: 1.02rem;
+      line-height: 1.6;
+      color: var(--shell-fg-2);
+    }
+    .hero-side p { margin: 0 0 var(--sp-4); }
+    .hero-side p:last-child { margin-bottom: 0; }
+    .hero-side strong { color: var(--shell-fg); font-weight: 700; }
+
+    .hero-pointer {
+      margin-top: var(--sp-5);
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-3);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      color: var(--shell-accent);
+      text-transform: uppercase;
+    }
+    .hero-pointer .arrow {
+      display: inline-block;
+      transform: translateY(1px);
+    }
+
+    /* ======================================================================
+       BRIGHTNESS DIAGRAM / a small visual that sells the premise
+       ====================================================================== */
+    .ambient {
+      grid-column: 1 / -1;
+      margin-top: var(--sp-7);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-5);
+      padding: var(--sp-5);
+      background: var(--shell-bg-elevated);
+      border: 1px solid var(--shell-border);
+      border-radius: var(--radius-md);
+    }
+    @media (min-width: 760px) {
+      .ambient {
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: var(--sp-6);
+      }
+    }
+    .ambient-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--shell-fg-3);
+    }
+    .ambient-bar {
+      position: relative;
+      height: 36px;
+      border-radius: 999px;
+      overflow: hidden;
+      background:
+        linear-gradient(90deg,
+          oklch(7% 0.01 55) 0%,
+          oklch(20% 0.01 55) 30%,
+          oklch(55% 0.05 60) 60%,
+          oklch(96% 0.04 80) 100%
+        );
+    }
+    .ambient-marks {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--shell-fg-3);
+      letter-spacing: 0.08em;
+      margin-top: var(--sp-2);
+    }
+    .ambient-text {
+      font-size: 0.92rem;
+      color: var(--shell-fg-2);
+      max-width: 32ch;
+    }
+    .ambient-text b {
+      color: var(--shell-fg);
+      font-weight: 700;
+    }
+
+    /* ======================================================================
+       SECTION HEADS
+       ====================================================================== */
+    .section-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: var(--sp-5);
+      padding-bottom: var(--sp-5);
+      margin-bottom: var(--sp-5);
+      border-bottom: 1px solid var(--shell-border);
+    }
+    .section-head h2 {
+      font-family: var(--font-display);
+      font-size: clamp(1.5rem, 2vw + 0.5rem, 2.1rem);
+      font-weight: 500;
+      letter-spacing: -0.02em;
+      margin: 0;
+    }
+    .section-head .index {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--shell-fg-3);
+      letter-spacing: 0.06em;
+    }
+
+    /* ======================================================================
+       THEME GALLERY
+       ====================================================================== */
+    .gallery {
+      padding: var(--sp-7) 0;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--sp-5);
+    }
+    .theme-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      background: var(--card-bg);
+      color: var(--card-fg);
+      box-shadow: 0 0 0 1px var(--shell-border);
+      cursor: pointer;
+      transition: transform 280ms var(--ease-out-quart), box-shadow 280ms var(--ease-out-quart);
+      isolation: isolate;
+      text-align: left;
+      width: 100%;
+    }
+    .theme-card:hover {
+      transform: translateY(-2px);
+    }
+    .theme-card:focus-visible {
+      outline: 2px solid var(--shell-accent);
+      outline-offset: 3px;
+    }
+    .theme-card[aria-selected="true"] {
+      box-shadow: 0 0 0 2px var(--shell-accent), 0 18px 40px -20px rgb(0 0 0 / 0.6);
+      transform: translateY(-2px);
+    }
+    .theme-card .swatch {
+      padding: var(--sp-5);
+      min-height: 168px;
+      font-family: var(--card-font, var(--font-body));
+      font-size: 0.95rem;
+      line-height: 1.5;
+      position: relative;
+    }
+    .theme-card .swatch h4 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.15rem;
+      margin: 0 0 var(--sp-2);
+      letter-spacing: -0.01em;
+      color: var(--card-fg);
+    }
+    .theme-card .swatch p {
+      margin: 0 0 var(--sp-2);
+      color: var(--card-fg-muted, var(--card-fg));
+      opacity: 0.92;
+    }
+    .theme-card .swatch .demo-link {
+      color: var(--card-link);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 2px;
+    }
+    .theme-card .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--sp-3);
+      padding: var(--sp-4) var(--sp-5);
+      background: var(--shell-bg-elevated);
+      color: var(--shell-fg);
+      border-top: 1px solid var(--shell-border);
+      font-size: 0.85rem;
+    }
+    .theme-card .meta .name-block {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .theme-card .meta .name {
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .theme-card .meta .ref {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--shell-fg-3);
+      letter-spacing: 0.04em;
+    }
+    .theme-card .meta .badges {
+      display: flex;
+      gap: var(--sp-2);
+      align-items: center;
+    }
+    .ratio-pill {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--shell-bg-deep);
+      color: var(--shell-fg);
+      letter-spacing: 0.04em;
+      border: 1px solid var(--shell-border);
+    }
+    .wcag-pill {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      padding: 3px 7px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .wcag-pill.pass-aaa {
+      background: oklch(28% 0.05 145);
+      color: oklch(90% 0.12 145);
+    }
+    .wcag-pill.pass-aa {
+      background: oklch(28% 0.04 70);
+      color: oklch(88% 0.12 70);
+    }
+    .wcag-pill.fail {
+      background: oklch(28% 0.05 25);
+      color: oklch(88% 0.14 25);
+    }
+
+    /* ======================================================================
+       READING PANEL
+       ====================================================================== */
+    .reading {
+      padding: var(--sp-7) 0 var(--sp-9);
+    }
+
+    .reading-controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-4);
+      padding: var(--sp-4) var(--sp-5);
+      background: var(--shell-bg-elevated);
+      border: 1px solid var(--shell-border);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--sp-5);
+      position: sticky;
+      top: var(--sp-4);
+      z-index: 10;
+      backdrop-filter: blur(6px);
+      background: color-mix(in oklch, var(--shell-bg-elevated) 86%, transparent);
+    }
+    @media (min-width: 920px) {
+      .reading-controls {
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+      }
+    }
+    .current-theme {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      min-width: 0;
+    }
+    .current-theme .label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--shell-fg-3);
+    }
+    .current-theme .name {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.08rem;
+      letter-spacing: -0.01em;
+    }
+    .current-theme .swatch-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--current-fg, var(--shell-accent));
+      box-shadow: inset 0 0 0 2px var(--current-bg, var(--shell-bg));
+      border: 1px solid var(--shell-border-strong);
+      flex-shrink: 0;
+    }
+
+    .brightness-control {
+      display: flex;
+      align-items: center;
+      gap: var(--sp-3);
+      min-width: 0;
+    }
+    .brightness-control label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--shell-fg-3);
+      white-space: nowrap;
+    }
+    .brightness-slider {
+      flex: 1;
+      min-width: 100px;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 999px;
+      background:
+        linear-gradient(90deg,
+          oklch(20% 0.005 55),
+          oklch(70% 0.06 60),
+          oklch(94% 0.04 80)
+        );
+      outline: none;
+      cursor: pointer;
+    }
+    .brightness-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--shell-fg);
+      border: 2px solid var(--shell-bg-deep);
+      box-shadow: 0 0 0 1px var(--shell-border-strong), 0 2px 6px rgb(0 0 0 / 0.4);
+      cursor: grab;
+      transition: transform 200ms var(--ease-out-quart);
+    }
+    .brightness-slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
+    .brightness-slider::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--shell-fg);
+      border: 2px solid var(--shell-bg-deep);
+      cursor: grab;
+    }
+    .brightness-value {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--shell-fg);
+      font-variant-numeric: tabular-nums;
+      min-width: 3.5ch;
+      text-align: right;
+    }
+
+    .compare-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--sp-2);
+      padding: var(--sp-2) var(--sp-4);
+      border: 1px solid var(--shell-border-strong);
+      border-radius: 999px;
+      font-size: 0.85rem;
+      color: var(--shell-fg);
+      transition: background 200ms var(--ease-out-quart), border-color 200ms var(--ease-out-quart);
+      white-space: nowrap;
+    }
+    .compare-toggle:hover { background: var(--shell-bg-raised); }
+    .compare-toggle[aria-pressed="true"] {
+      background: var(--shell-accent);
+      color: var(--shell-bg-deep);
+      border-color: var(--shell-accent);
+    }
+    .compare-toggle svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .reading-panel {
+      position: relative;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--shell-border);
+      overflow: hidden;
+      transition: filter 280ms var(--ease-out-quart);
+      filter: brightness(var(--device-brightness, 1));
+    }
+
+    .panel-frame {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--sp-3) var(--sp-5);
+      background: color-mix(in oklch, var(--theme-bg-elevated, var(--shell-bg-elevated)) 100%, transparent);
+      color: var(--theme-fg-muted, var(--shell-fg-2));
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--theme-border, var(--shell-border));
+    }
+    .panel-frame-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .panel-frame-dots span {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--theme-fg-muted, var(--shell-fg-3));
+      opacity: 0.3;
+    }
+    .panel-frame-dots span:first-child { opacity: 0.5; }
+
+    /* ======================================================================
+       THEMED PROSE / styled per-theme via CSS vars on container
+       ====================================================================== */
+    .prose-container {
+      background: var(--theme-bg);
+      color: var(--theme-fg);
+      padding: clamp(var(--sp-5), 4vw, var(--sp-8));
+    }
+
+    .prose {
+      max-width: 68ch;
+      margin: 0 auto;
+      font-family: var(--font-body);
+      font-size: 1.0625rem;
+      line-height: 1.65;
+      letter-spacing: 0.005em;
+    }
+
+    .prose h1, .prose h2, .prose h3, .prose h4 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--theme-fg);
+      text-wrap: balance;
+    }
+    .prose h1 {
+      font-size: clamp(2rem, 4vw + 0.5rem, 3rem);
+      margin: 0 0 var(--sp-5);
+      letter-spacing: -0.03em;
+    }
+    .prose h2 {
+      font-size: 1.65rem;
+      margin: var(--sp-8) 0 var(--sp-4);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--theme-border);
+    }
+    .prose h2:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
+    .prose h3 {
+      font-size: 1.25rem;
+      margin: var(--sp-6) 0 var(--sp-3);
+    }
+    .prose h4 {
+      font-size: 1.05rem;
+      margin: var(--sp-5) 0 var(--sp-2);
+    }
+    .prose p {
+      margin: 0 0 var(--sp-4);
+      color: var(--theme-fg);
+    }
+    .prose p + p { margin-top: 0; }
+    .prose strong {
+      color: var(--theme-fg-strong, var(--theme-fg));
+      font-weight: 700;
+    }
+    .prose em { font-style: italic; }
+    .prose a {
+      color: var(--theme-link);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 3px;
+      text-decoration-color: color-mix(in oklch, var(--theme-link) 50%, transparent);
+      transition: text-decoration-color 200ms;
+    }
+    .prose a:hover {
+      text-decoration-color: var(--theme-link);
+    }
+    .prose code {
+      font-family: var(--font-mono);
+      font-size: 0.88em;
+      background: var(--theme-code-bg);
+      color: var(--theme-fg);
+      padding: 0.15em 0.4em;
+      border-radius: 4px;
+      letter-spacing: 0;
+    }
+    .prose pre {
+      background: var(--theme-code-bg);
+      padding: var(--sp-4);
+      border-radius: var(--radius-sm);
+      overflow-x: auto;
+      font-size: 0.92rem;
+      border: 1px solid var(--theme-border);
+      margin: var(--sp-4) 0;
+    }
+    .prose pre code {
+      background: none;
+      padding: 0;
+    }
+    .prose blockquote {
+      margin: var(--sp-5) 0;
+      padding: var(--sp-2) 0 var(--sp-2) var(--sp-5);
+      border-left: 2px solid var(--theme-link);
+      font-style: italic;
+      color: var(--theme-fg-muted, var(--theme-fg));
+      font-size: 1.08rem;
+    }
+    .prose ul, .prose ol {
+      margin: var(--sp-4) 0;
+      padding-left: var(--sp-5);
+    }
+    .prose li {
+      margin: var(--sp-2) 0;
+    }
+    .prose li::marker {
+      color: var(--theme-fg-muted, var(--theme-fg));
+    }
+    .prose hr {
+      border: 0;
+      height: 1px;
+      background: var(--theme-border);
+      margin: var(--sp-6) 0;
+    }
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: var(--sp-5) 0;
+      font-size: 0.95rem;
+    }
+    .prose th, .prose td {
+      padding: var(--sp-3);
+      text-align: left;
+      border-bottom: 1px solid var(--theme-border);
+    }
+    .prose th {
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--theme-fg);
+      letter-spacing: -0.005em;
+    }
+    .prose img {
+      max-width: 100%;
+      height: auto;
+      vertical-align: middle;
+      display: inline-block;
+      margin: 1px 2px;
+    }
+    .prose .badges-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--sp-2);
+      margin: var(--sp-5) 0;
+    }
+
+    /* ======================================================================
+       COMPARE GRID
+       ====================================================================== */
+    .compare-wrapper {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 480ms var(--ease-out-expo);
+      overflow: hidden;
+    }
+    .compare-wrapper[data-open="true"] {
+      grid-template-rows: 1fr;
+    }
+    .compare-inner {
+      min-height: 0;
+      padding-top: var(--sp-5);
+    }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-4);
+      filter: brightness(var(--device-brightness, 1));
+      transition: filter 280ms var(--ease-out-quart);
+    }
+    @media (min-width: 920px) {
+      .compare-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    .compare-col {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--shell-border);
+      overflow: hidden;
+      background: var(--theme-bg);
+      color: var(--theme-fg);
+      display: flex;
+      flex-direction: column;
+    }
+    .compare-col .compare-head {
+      padding: var(--sp-3) var(--sp-4);
+      background: color-mix(in oklch, var(--theme-bg) 50%, oklch(50% 0 0));
+      color: var(--theme-fg);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--theme-border);
+    }
+    .compare-col .compare-head .ratio {
+      color: var(--theme-fg);
+      opacity: 0.7;
+    }
+    .compare-col .compare-content {
+      padding: var(--sp-5);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      line-height: 1.55;
+      flex: 1;
+      max-height: 480px;
+      overflow-y: auto;
+    }
+    .compare-col .compare-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.05rem;
+      margin: 0 0 var(--sp-3);
+      font-weight: 600;
+    }
+    .compare-col .compare-content p {
+      margin: 0 0 var(--sp-3);
+    }
+    .compare-col .compare-content a {
+      color: var(--theme-link);
+      text-decoration: underline;
+    }
+
+    /* ======================================================================
+       FOOTER
+       ====================================================================== */
+    .footer {
+      padding: var(--sp-7) 0 var(--sp-8);
+      border-top: 1px solid var(--shell-border);
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-5);
+      color: var(--shell-fg-3);
+      font-size: 0.88rem;
+    }
+    @media (min-width: 760px) {
+      .footer {
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: var(--sp-7);
+      }
+    }
+    .footer h5 {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--shell-fg-2);
+      margin: 0 0 var(--sp-2);
+      font-weight: 500;
+    }
+    .footer p { margin: 0 0 var(--sp-2); max-width: 50ch; }
+    .footer a {
+      color: var(--shell-fg-2);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: var(--shell-border-strong);
+    }
+    .footer a:hover { color: var(--shell-fg); }
+
+    /* ======================================================================
+       MOTION PREFERENCES
+       ====================================================================== */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+
+    /* small flourish: subtle grain on shell background only */
+    .grain {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 0.04;
+      mix-blend-mode: overlay;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='200' height='200' filter='url(%23n)' opacity='0.6'/></svg>");
+    }
+    .page, .topbar, .hero, .gallery, .reading, .footer { position: relative; z-index: 2; }
+  </style>
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div class="page">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <span></span><span></span><span></span><span></span>
+        </span>
+        <span>Contrast Check</span>
+      </div>
+      <div class="topbar-meta">
+        <span class="dot-wrap"><span class="dot"></span></span>
+        <span>WCAG 2.1 / Computed live</span>
+        <span>OKLCH</span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <span class="eyebrow"><b>01</b> A case for the middle</span>
+        <h1>
+          Your dark mode<br />
+          <span class="ink-light">is too</span> <em>dark.</em>
+        </h1>
+      </div>
+
+      <aside class="hero-side">
+        <p>
+          At 30% screen brightness in a sunlit room, pure white on pure black disappears. So does pure black on pure white. Both extremes assume a viewing environment that almost never exists.
+        </p>
+        <p>
+          <strong>Six themes that pass WCAG AAA.</strong> Each calibrated to stay legible at the brightness levels people actually use: a laptop on a flight, a phone on a bus, a kitchen table at eight in the morning.
+        </p>
+        <span class="hero-pointer">
+          <span>Pick a theme below</span>
+          <span class="arrow">↓</span>
+        </span>
+      </aside>
+
+      <div class="ambient">
+        <span class="ambient-label">Device brightness reality</span>
+        <div>
+          <div class="ambient-bar" aria-hidden="true"></div>
+          <div class="ambient-marks">
+            <span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span>
+          </div>
+        </div>
+        <div class="ambient-text">
+          The brightness slider you ship below assumes the user is at 100%. <b>Most aren't.</b>
+        </div>
+      </div>
+    </section>
+
+    <section class="gallery" aria-labelledby="gallery-head">
+      <div class="section-head">
+        <h2 id="gallery-head">Six middle-ground themes</h2>
+        <span class="index">Click to read in this theme</span>
+      </div>
+      <div class="gallery-grid" id="gallery-grid" role="tablist"></div>
+    </section>
+
+    <section class="reading" aria-labelledby="reading-head">
+      <div class="section-head">
+        <h2 id="reading-head">Read it through the theme</h2>
+        <span class="index">Drag brightness, then compare</span>
+      </div>
+
+      <div class="reading-controls">
+        <div class="current-theme">
+          <span class="swatch-dot" id="current-swatch" aria-hidden="true"></span>
+          <div>
+            <div class="label">Reading in</div>
+            <div class="name" id="current-name">Nokia Amber</div>
+          </div>
+        </div>
+
+        <div class="brightness-control">
+          <label for="brightness-slider">Screen brightness</label>
+          <input
+            type="range"
+            id="brightness-slider"
+            class="brightness-slider"
+            min="20"
+            max="100"
+            value="100"
+            step="5"
+            aria-valuetext="100 percent"
+          />
+          <span class="brightness-value" id="brightness-value">100%</span>
+        </div>
+
+        <button class="compare-toggle" id="compare-toggle" aria-pressed="false">
+          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <rect x="1" y="2" width="4" height="12" rx="1" fill="currentColor" opacity="0.4"/>
+            <rect x="6" y="2" width="4" height="12" rx="1" fill="currentColor"/>
+            <rect x="11" y="2" width="4" height="12" rx="1" fill="currentColor" opacity="0.4"/>
+          </svg>
+          <span>Compare to dark & light</span>
+        </button>
+      </div>
+
+      <div class="reading-panel" id="reading-panel">
+        <div class="panel-frame">
+          <span class="panel-frame-dots"><span></span><span></span><span></span></span>
+          <span id="panel-frame-meta">awesome-readable-design / README.md</span>
+          <span id="panel-frame-ratio">— : 1</span>
+        </div>
+        <div class="prose-container" id="prose-container">
+          <article class="prose" id="prose"></article>
+        </div>
+      </div>
+
+      <div class="compare-wrapper" id="compare-wrapper" data-open="false">
+        <div class="compare-inner">
+          <div class="compare-grid">
+            <div class="compare-col" id="col-dark">
+              <div class="compare-head">
+                <span>True Dark</span>
+                <span class="ratio">21.00 : 1</span>
+              </div>
+              <div class="compare-content" id="col-dark-content"></div>
+            </div>
+            <div class="compare-col" id="col-active">
+              <div class="compare-head">
+                <span id="col-active-name">This Theme</span>
+                <span class="ratio" id="col-active-ratio">—</span>
+              </div>
+              <div class="compare-content" id="col-active-content"></div>
+            </div>
+            <div class="compare-col" id="col-light">
+              <div class="compare-head">
+                <span>True Light</span>
+                <span class="ratio">21.00 : 1</span>
+              </div>
+              <div class="compare-content" id="col-light-content"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div>
+        <h5>About this artifact</h5>
+        <p>
+          A one-page case for calibrated dark mode. The shell uses the Warm Slate theme, one of the six. The argument is the design.
+        </p>
+        <p>
+          Built as a single static HTML file. No build step, no tracking, no dependencies. Open it from a USB stick if you want.
+        </p>
+      </div>
+      <div>
+        <h5>Methodology</h5>
+        <p>
+          Contrast ratios computed from OKLCH coordinates via OKLab → linear sRGB → WCAG 2.1 relative luminance.
+        </p>
+        <p>
+          AA: 4.5:1 body, 3:1 large. AAA: 7:1 body, 4.5:1 large.
+        </p>
+      </div>
+      <div>
+        <h5>References</h5>
+        <p>
+          Nokia 3310 amber LCD. Kindle Paperwhite warm frontlight. Solarized by Ethan Schoonover. APCA contrast (Andrew Somers).
+        </p>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    // ========================================================================
+    // COLOR MATH / OKLCH → linear sRGB → relative luminance → WCAG ratio
+    // L is 0..1, C is 0..~0.4, H is degrees
+    // ========================================================================
+    function oklchToLinearRgb(L, C, H) {
+      const hRad = (H * Math.PI) / 180;
+      const a = C * Math.cos(hRad);
+      const b = C * Math.sin(hRad);
+
+      const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
+      const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
+      const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
+
+      const l = l_ ** 3;
+      const m = m_ ** 3;
+      const s = s_ ** 3;
+
+      return [
+        +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
+        -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
+        -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s,
+      ];
+    }
+
+    function linearToSrgb(v) {
+      const clamped = Math.max(0, Math.min(1, v));
+      return clamped <= 0.0031308
+        ? 12.92 * clamped
+        : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+    }
+
+    function oklchToSrgb([L, C, H]) {
+      const [r, g, b] = oklchToLinearRgb(L, C, H);
+      return [linearToSrgb(r), linearToSrgb(g), linearToSrgb(b)];
+    }
+
+    function relativeLuminance([r, g, b]) {
+      const ch = (v) =>
+        v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b);
+    }
+
+    function contrastRatio(fgOklch, bgOklch) {
+      const lFg = relativeLuminance(oklchToSrgb(fgOklch));
+      const lBg = relativeLuminance(oklchToSrgb(bgOklch));
+      const [bright, dark] = lFg > lBg ? [lFg, lBg] : [lBg, lFg];
+      return (bright + 0.05) / (dark + 0.05);
+    }
+
+    function wcagLevel(ratio) {
+      if (ratio >= 7) return { label: 'AAA', class: 'pass-aaa' };
+      if (ratio >= 4.5) return { label: 'AA', class: 'pass-aa' };
+      return { label: 'FAIL', class: 'fail' };
+    }
+
+    function oklchCss([L, C, H]) {
+      return `oklch(${(L * 100).toFixed(1)}% ${C.toFixed(3)} ${H.toFixed(0)})`;
+    }
+
+    // ========================================================================
+    // THEME DEFINITIONS
+    // ========================================================================
+    const THEMES = [
+      {
+        id: 'nokia',
+        name: 'Nokia Amber',
+        ref: 'Nokia 3310 LCD, 2000',
+        bg:          [0.080, 0.012, 60],
+        bgElevated:  [0.115, 0.014, 60],
+        fg:          [0.760, 0.140, 80],
+        fgStrong:    [0.870, 0.150, 80],
+        fgMuted:     [0.620, 0.110, 80],
+        border:      [0.200, 0.040, 75],
+        link:        [0.820, 0.140, 65],
+        codeBg:      [0.150, 0.025, 70],
+      },
+      {
+        id: 'warm-slate',
+        name: 'Warm Slate',
+        ref: 'Off-white on warm dark',
+        bg:          [0.150, 0.012, 65],
+        bgElevated:  [0.195, 0.014, 65],
+        fg:          [0.870, 0.018, 75],
+        fgStrong:    [0.950, 0.020, 75],
+        fgMuted:     [0.700, 0.020, 75],
+        border:      [0.260, 0.014, 65],
+        link:        [0.780, 0.110, 60],
+        codeBg:      [0.220, 0.014, 65],
+      },
+      {
+        id: 'solarized',
+        name: 'Solarized Dark',
+        ref: 'Ethan Schoonover, 2011',
+        bg:          [0.245, 0.040, 195],
+        bgElevated:  [0.285, 0.038, 195],
+        fg:          [0.770, 0.045, 85],
+        fgStrong:    [0.870, 0.050, 85],
+        fgMuted:     [0.630, 0.040, 195],
+        border:      [0.355, 0.040, 195],
+        link:        [0.700, 0.130, 250],
+        codeBg:      [0.205, 0.040, 195],
+      },
+      {
+        id: 'paper-dark',
+        name: 'Paper Dark',
+        ref: 'Kindle warmth inverted',
+        bg:          [0.180, 0.018, 75],
+        bgElevated:  [0.225, 0.020, 75],
+        fg:          [0.900, 0.022, 80],
+        fgStrong:    [0.965, 0.025, 80],
+        fgMuted:     [0.730, 0.022, 80],
+        border:      [0.290, 0.020, 75],
+        link:        [0.810, 0.130, 35],
+        codeBg:      [0.250, 0.020, 75],
+      },
+      {
+        id: 'forest',
+        name: 'Forest',
+        ref: 'Pine at twilight',
+        bg:          [0.145, 0.022, 150],
+        bgElevated:  [0.190, 0.024, 150],
+        fg:          [0.830, 0.058, 148],
+        fgStrong:    [0.910, 0.062, 148],
+        fgMuted:     [0.660, 0.050, 148],
+        border:      [0.250, 0.030, 148],
+        link:        [0.820, 0.090, 130],
+        codeBg:      [0.215, 0.026, 148],
+      },
+      {
+        id: 'dusk',
+        name: 'Dusk',
+        ref: 'Last light on desert',
+        bg:          [0.170, 0.022, 28],
+        bgElevated:  [0.215, 0.024, 28],
+        fg:          [0.870, 0.034, 28],
+        fgStrong:    [0.940, 0.036, 28],
+        fgMuted:     [0.690, 0.030, 28],
+        border:      [0.280, 0.026, 28],
+        link:        [0.800, 0.130, 22],
+        codeBg:      [0.240, 0.026, 28],
+      },
+    ];
+
+    // ========================================================================
+    // MARKDOWN CONTENT / awesome-list format, on-theme
+    // ========================================================================
+    const MARKDOWN = `# Awesome Readable Design
+
+> A curated list of things that get contrast right. Inclusion criteria: passes AAA at low device brightness, calibrated for non-ideal viewing, ships in production.
+
+![WCAG AAA](https://img.shields.io/badge/WCAG-AAA-success?style=flat-square) ![OKLCH](https://img.shields.io/badge/colors-OKLCH-blue?style=flat-square) ![Updated 2026](https://img.shields.io/badge/updated-2026--05-orange?style=flat-square)
+
+## Contents
+
+- [Brands that ship calibrated dark mode](#brands-that-ship-calibrated-dark-mode)
+- [Tools](#tools)
+- [Books and essays](#books-and-essays)
+- [Hardware references](#hardware-references)
+- [Color systems](#color-systems)
+
+## Brands that ship calibrated dark mode
+
+Real production examples. None use pure \`#000000\` for surfaces or pure \`#ffffff\` for type.
+
+- [GitHub Primer](https://primer.style) - Dark mode uses a calibrated charcoal at \`#0d1117\`, plus a "dark dimmed" variant for users at lower brightness.
+- [Linear](https://linear.app) - The rare SaaS app whose dark theme stays comfortable for a 10-hour workday. Surfaces sit at \`oklch(18%)\`, never deeper.
+- [Obsidian](https://obsidian.md) - Default theme reads at AAA across every plugin and pane. Community themes that drop below AA are flagged.
+- [Working Copy](https://workingcopy.app) - The git client whose dark mode never tires the eyes after a six-hour debugging session.
+
+## Tools
+
+1. [WebAIM Contrast Checker](https://webaim.org/resources/contrastchecker) - The standard. Still works on a 2007 laptop.
+2. [APCA Contrast](https://www.myndex.com/APCA) - Successor to WCAG 2.x. Accounts for perceptual contrast and font weight.
+3. [OKLCH Color Picker](https://oklch.com) by Evil Martians - Pick perceptually uniform colors without the HSL math.
+4. [Polypane](https://polypane.app) - Real-time accessibility testing across multiple viewports and color schemes.
+5. [Realtime Colors](https://realtimecolors.com) - Live preview your palette on a working interface, not just swatches.
+
+## Books and essays
+
+- *The Elements of Typographic Style* by Robert Bringhurst (1992) - Chapter 4 on optical adjustments still beats most contemporary writing on UI.
+- *Designing Visual Interfaces* by Mullet and Sano (1995) - The chapter on **value contrast** could have been written for OLED.
+- *Practical Typography* by Matthew Butterick (online, ongoing) - Free, opinionated, correct on almost everything.
+- [*The thing with leather sleeves*](https://stuffandnonsense.co.uk/blog) by Andy Clarke - Long-running notes on web typography.
+
+## Hardware references
+
+| Device | Year | Lesson |
+|---|---|---|
+| Nokia 3310 | 2000 | Amber on near-black, legible in direct sunlight |
+| Kindle Paperwhite | 2012 | Warm frontlight, paper-like reflectance |
+| iPad Pro with True Tone | 2017 | White point shifts based on ambient color temperature |
+| Sony Walkman NW-A55 | 2018 | OLED at 20% brightness without visible posterization |
+
+## Color systems
+
+- **Solarized** (2011) - Single-hue palette, equal CIELAB distances between values. Famously lower contrast than WCAG demands.
+- **Tailwind 3.x** (2017) - Perceptual lightness across hues. The 950 step exists because 900 wasn't dark enough.
+- **Radix Colors** (2022) - 12-step scales with explicit semantic roles. Dark mode is its own scale, not an inversion.
+- **OKLCH** (2020) - Perceptually uniform replacement for HSL. Now native in CSS.
+
+> "The best dark mode is the one you don't have to fight at eight in the morning." \`— a designer who has been through this\`
+
+---
+
+*This list is opinionated. Pull requests welcome at the source, which does not actually exist, because this list is a demo for a single-page contrast check artifact.*
+`;
+
+    // ========================================================================
+    // TINY MARKDOWN PARSER / handles what awesome-lists need
+    // ========================================================================
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[c]));
+    }
+
+    function parseInline(text) {
+      let out = escapeHtml(text);
+      // Images: ![alt](url)
+      out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) =>
+        `<img src="${url}" alt="${alt}" loading="lazy" />`
+      );
+      // Links: [text](url)
+      out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) =>
+        `<a href="${url}" rel="noopener" target="_blank">${label}</a>`
+      );
+      // Bold: **text**
+      out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      // Italic: *text*
+      out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      // Inline code: `text`
+      out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
+      return out;
+    }
+
+    function parseMarkdown(md) {
+      const lines = md.split('\n');
+      const out = [];
+      let i = 0;
+
+      const flushList = (items, ordered, depth) => {
+        const tag = ordered ? 'ol' : 'ul';
+        out.push(`<${tag}>${items.map(item => `<li>${parseInline(item)}</li>`).join('')}</${tag}>`);
+      };
+
+      while (i < lines.length) {
+        const line = lines[i];
+        const trimmed = line.trim();
+
+        // Empty
+        if (!trimmed) { i++; continue; }
+
+        // Headings
+        const heading = trimmed.match(/^(#{1,6})\s+(.+)$/);
+        if (heading) {
+          const level = heading[1].length;
+          out.push(`<h${level}>${parseInline(heading[2])}</h${level}>`);
+          i++;
+          continue;
+        }
+
+        // HR
+        if (/^---+$/.test(trimmed)) {
+          out.push('<hr />');
+          i++;
+          continue;
+        }
+
+        // Blockquote
+        if (trimmed.startsWith('>')) {
+          const quoteLines = [];
+          while (i < lines.length && lines[i].trim().startsWith('>')) {
+            quoteLines.push(lines[i].trim().replace(/^>\s?/, ''));
+            i++;
+          }
+          out.push(`<blockquote><p>${parseInline(quoteLines.join(' '))}</p></blockquote>`);
+          continue;
+        }
+
+        // Tables
+        if (trimmed.includes('|') && i + 1 < lines.length && /^\s*\|?\s*:?-+/.test(lines[i + 1])) {
+          const headerCells = trimmed.split('|').map(c => c.trim()).filter(Boolean);
+          i += 2; // skip header and separator
+          const rows = [];
+          while (i < lines.length && lines[i].trim().includes('|')) {
+            const cells = lines[i].trim().split('|').map(c => c.trim()).filter(Boolean);
+            rows.push(cells);
+            i++;
+          }
+          const thead = `<thead><tr>${headerCells.map(c => `<th>${parseInline(c)}</th>`).join('')}</tr></thead>`;
+          const tbody = `<tbody>${rows.map(r => `<tr>${r.map(c => `<td>${parseInline(c)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+          out.push(`<table>${thead}${tbody}</table>`);
+          continue;
+        }
+
+        // Unordered list
+        if (/^[-*]\s+/.test(trimmed)) {
+          const items = [];
+          while (i < lines.length && /^[-*]\s+/.test(lines[i].trim())) {
+            items.push(lines[i].trim().replace(/^[-*]\s+/, ''));
+            i++;
+          }
+          flushList(items, false);
+          continue;
+        }
+
+        // Ordered list
+        if (/^\d+\.\s+/.test(trimmed)) {
+          const items = [];
+          while (i < lines.length && /^\d+\.\s+/.test(lines[i].trim())) {
+            items.push(lines[i].trim().replace(/^\d+\.\s+/, ''));
+            i++;
+          }
+          flushList(items, true);
+          continue;
+        }
+
+        // Paragraph (may contain image-only lines that should become a badges row)
+        const paraLines = [];
+        while (i < lines.length && lines[i].trim() && !/^(#{1,6}\s|[-*]\s+|\d+\.\s+|---+$|>)/.test(lines[i].trim())) {
+          paraLines.push(lines[i]);
+          i++;
+        }
+        const paraText = paraLines.join(' ');
+        // If paragraph is only images, render as badges row
+        const stripped = paraText.replace(/!\[[^\]]*\]\([^)]+\)/g, '').trim();
+        if (paraLines.length && !stripped) {
+          out.push(`<p class="badges-row">${parseInline(paraText)}</p>`);
+        } else if (paraText.trim()) {
+          out.push(`<p>${parseInline(paraText)}</p>`);
+        }
+      }
+
+      return out.join('\n');
+    }
+
+    // ========================================================================
+    // RENDERING
+    // ========================================================================
+    const PARSED_HTML = parseMarkdown(MARKDOWN);
+
+    // Compact excerpt for compare-mode columns and gallery card previews
+    const COMPACT_HTML = (() => {
+      const md = `### Awesome Readable Design
+
+A curated list of things that get contrast right. Inclusion criteria: passes AAA at low brightness, ships in production.
+
+- [Linear](https://linear.app) - Surfaces sit at \`oklch(18%)\`, never deeper.
+- [Obsidian](https://obsidian.md) - Default theme reads at AAA across every pane.
+- [Kindle Paperwhite](https://amazon.com) - Warm frontlight, paper-like reflectance.
+
+> "The best dark mode is the one you don't have to fight at eight in the morning."`;
+      return parseMarkdown(md);
+    })();
+
+    function applyTheme(theme, target) {
+      const ratio = contrastRatio(theme.fg, theme.bg);
+      const ratioMuted = contrastRatio(theme.fgMuted, theme.bg);
+      target.style.setProperty('--theme-bg', oklchCss(theme.bg));
+      target.style.setProperty('--theme-bg-elevated', oklchCss(theme.bgElevated));
+      target.style.setProperty('--theme-fg', oklchCss(theme.fg));
+      target.style.setProperty('--theme-fg-strong', oklchCss(theme.fgStrong));
+      target.style.setProperty('--theme-fg-muted', oklchCss(theme.fgMuted));
+      target.style.setProperty('--theme-border', oklchCss(theme.border));
+      target.style.setProperty('--theme-link', oklchCss(theme.link));
+      target.style.setProperty('--theme-code-bg', oklchCss(theme.codeBg));
+      return { ratio, ratioMuted };
+    }
+
+    function renderGallery() {
+      const grid = document.getElementById('gallery-grid');
+      grid.innerHTML = '';
+      THEMES.forEach((theme, idx) => {
+        const ratio = contrastRatio(theme.fg, theme.bg);
+        const level = wcagLevel(ratio);
+        const card = document.createElement('button');
+        card.className = 'theme-card';
+        card.dataset.themeId = theme.id;
+        card.setAttribute('role', 'tab');
+        card.setAttribute('aria-selected', idx === 0 ? 'true' : 'false');
+        card.style.setProperty('--card-bg', oklchCss(theme.bg));
+        card.style.setProperty('--card-fg', oklchCss(theme.fg));
+        card.style.setProperty('--card-fg-muted', oklchCss(theme.fgMuted));
+        card.style.setProperty('--card-link', oklchCss(theme.link));
+
+        card.innerHTML = `
+          <div class="swatch">
+            <h4>${theme.name}</h4>
+            <p>The quick brown fox jumps over the lazy dog, again and again.</p>
+            <p><a class="demo-link">Read more</a> &middot; <span style="opacity:0.7">draft</span></p>
+          </div>
+          <div class="meta">
+            <div class="name-block">
+              <span class="name">${theme.name}</span>
+              <span class="ref">${theme.ref}</span>
+            </div>
+            <div class="badges">
+              <span class="ratio-pill">${ratio.toFixed(2)}:1</span>
+              <span class="wcag-pill ${level.class}">${level.label}</span>
+            </div>
+          </div>
+        `;
+        card.addEventListener('click', () => selectTheme(theme.id));
+        grid.appendChild(card);
+      });
+    }
+
+    function selectTheme(themeId) {
+      const theme = THEMES.find(t => t.id === themeId);
+      if (!theme) return;
+
+      // Update gallery selection
+      document.querySelectorAll('.theme-card').forEach(c => {
+        c.setAttribute('aria-selected', c.dataset.themeId === themeId ? 'true' : 'false');
+      });
+
+      // Reading panel
+      const panel = document.getElementById('reading-panel');
+      const proseContainer = document.getElementById('prose-container');
+      const prose = document.getElementById('prose');
+      const { ratio } = applyTheme(theme, panel);
+      const level = wcagLevel(ratio);
+      prose.innerHTML = PARSED_HTML;
+
+      // Frame meta
+      document.getElementById('panel-frame-meta').textContent = `${theme.id} / README.md`;
+      document.getElementById('panel-frame-ratio').textContent = `${ratio.toFixed(2)} : 1  ${level.label}`;
+
+      // Current theme indicator
+      document.getElementById('current-name').textContent = theme.name;
+      const swatchDot = document.getElementById('current-swatch');
+      swatchDot.style.background = oklchCss(theme.fg);
+      swatchDot.style.boxShadow = `inset 0 0 0 4px ${oklchCss(theme.bg)}`;
+
+      // Compare middle column
+      const colActive = document.getElementById('col-active');
+      applyTheme(theme, colActive);
+      document.getElementById('col-active-name').textContent = theme.name;
+      document.getElementById('col-active-ratio').textContent = `${ratio.toFixed(2)} : 1`;
+      document.getElementById('col-active-content').innerHTML = COMPACT_HTML;
+    }
+
+    function setupCompareColumns() {
+      // True Dark
+      const colDark = document.getElementById('col-dark');
+      colDark.style.setProperty('--theme-bg', '#000000');
+      colDark.style.setProperty('--theme-bg-elevated', '#0a0a0a');
+      colDark.style.setProperty('--theme-fg', '#ffffff');
+      colDark.style.setProperty('--theme-fg-strong', '#ffffff');
+      colDark.style.setProperty('--theme-fg-muted', '#cccccc');
+      colDark.style.setProperty('--theme-border', '#222222');
+      colDark.style.setProperty('--theme-link', '#5599ff');
+      colDark.style.setProperty('--theme-code-bg', '#111111');
+      document.getElementById('col-dark-content').innerHTML = COMPACT_HTML;
+
+      // True Light
+      const colLight = document.getElementById('col-light');
+      colLight.style.setProperty('--theme-bg', '#ffffff');
+      colLight.style.setProperty('--theme-bg-elevated', '#f4f4f4');
+      colLight.style.setProperty('--theme-fg', '#000000');
+      colLight.style.setProperty('--theme-fg-strong', '#000000');
+      colLight.style.setProperty('--theme-fg-muted', '#444444');
+      colLight.style.setProperty('--theme-border', '#dddddd');
+      colLight.style.setProperty('--theme-link', '#0044cc');
+      colLight.style.setProperty('--theme-code-bg', '#f0f0f0');
+      document.getElementById('col-light-content').innerHTML = COMPACT_HTML;
+    }
+
+    function setupBrightness() {
+      const slider = document.getElementById('brightness-slider');
+      const valueLabel = document.getElementById('brightness-value');
+      const onInput = () => {
+        const value = Number(slider.value);
+        valueLabel.textContent = `${value}%`;
+        slider.setAttribute('aria-valuetext', `${value} percent`);
+        const filterValue = value / 100;
+        document.documentElement.style.setProperty('--device-brightness', String(filterValue));
+      };
+      slider.addEventListener('input', onInput);
+      onInput();
+    }
+
+    function setupCompareToggle() {
+      const btn = document.getElementById('compare-toggle');
+      const wrap = document.getElementById('compare-wrapper');
+      btn.addEventListener('click', () => {
+        const isOpen = wrap.getAttribute('data-open') === 'true';
+        wrap.setAttribute('data-open', String(!isOpen));
+        btn.setAttribute('aria-pressed', String(!isOpen));
+        btn.querySelector('span').textContent = isOpen
+          ? 'Compare to dark & light'
+          : 'Hide comparison';
+        if (!isOpen) {
+          requestAnimationFrame(() => {
+            wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          });
+        }
+      });
+    }
+
+    // ========================================================================
+    // BOOT
+    // ========================================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      renderGallery();
+      setupCompareColumns();
+      setupBrightness();
+      setupCompareToggle();
+      selectTheme(THEMES[0].id);
+    });
+  </script>
+</body>
+</html>
