@@ -14,7 +14,6 @@
   <style>
     /* ======================================================================
        SHELL TOKENS / warm near-black sepia charcoal
-       The tool itself uses one of the middle-ground themes it argues for.
        ====================================================================== */
     :root {
       --shell-bg:           oklch(11% 0.012 55);
@@ -46,6 +45,10 @@
 
       --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
       --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+
+      --device-brightness: 1;
+      --scene-cast: transparent;
+      --scene-cast-amt: 0;
     }
 
     *, *::before, *::after { box-sizing: border-box; }
@@ -63,20 +66,22 @@
       font-kerning: normal;
       overflow-x: hidden;
     }
-
-    /* Atkinson Hyperlegible on dark needs slight weight compensation */
     body { font-weight: 400; }
-
     a { color: inherit; }
-    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+    button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; padding: 0; }
 
     .page {
-      max-width: 1320px;
+      max-width: 1360px;
       margin: 0 auto;
       padding: 0 var(--sp-5);
     }
     @media (min-width: 768px) {
       .page { padding: 0 var(--sp-7); }
+    }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0); border: 0;
     }
 
     /* ======================================================================
@@ -126,13 +131,12 @@
     }
     .topbar-meta .dot {
       display: inline-block;
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--shell-success);
       box-shadow: 0 0 8px var(--shell-success);
     }
-    @media (max-width: 640px) {
+    @media (max-width: 720px) {
       .topbar-meta span:not(.dot-wrap) { display: none; }
     }
 
@@ -153,7 +157,6 @@
         align-items: end;
       }
     }
-
     .eyebrow {
       font-family: var(--font-mono);
       font-size: 0.72rem;
@@ -166,15 +169,10 @@
     }
     .eyebrow::before {
       content: '';
-      width: 28px;
-      height: 1px;
+      width: 28px; height: 1px;
       background: var(--shell-fg-3);
     }
-    .eyebrow b {
-      font-weight: 400;
-      color: var(--shell-accent);
-    }
-
+    .eyebrow b { font-weight: 400; color: var(--shell-accent); }
     .hero h1 {
       font-family: var(--font-display);
       font-size: clamp(2.6rem, 7.5vw + 0.5rem, 6.25rem);
@@ -191,7 +189,6 @@
       font-weight: 500;
       color: var(--shell-accent);
     }
-
     .hero-side {
       max-width: 38ch;
       font-size: 1.02rem;
@@ -201,7 +198,6 @@
     .hero-side p { margin: 0 0 var(--sp-4); }
     .hero-side p:last-child { margin-bottom: 0; }
     .hero-side strong { color: var(--shell-fg); font-weight: 700; }
-
     .hero-pointer {
       margin-top: var(--sp-5);
       display: inline-flex;
@@ -213,14 +209,6 @@
       color: var(--shell-accent);
       text-transform: uppercase;
     }
-    .hero-pointer .arrow {
-      display: inline-block;
-      transform: translateY(1px);
-    }
-
-    /* ======================================================================
-       BRIGHTNESS DIAGRAM / a small visual that sells the premise
-       ====================================================================== */
     .ambient {
       grid-column: 1 / -1;
       margin-top: var(--sp-7);
@@ -273,10 +261,7 @@
       color: var(--shell-fg-2);
       max-width: 32ch;
     }
-    .ambient-text b {
-      color: var(--shell-fg);
-      font-weight: 700;
-    }
+    .ambient-text b { color: var(--shell-fg); font-weight: 700; }
 
     /* ======================================================================
        SECTION HEADS
@@ -305,11 +290,9 @@
     }
 
     /* ======================================================================
-       THEME GALLERY
+       GALLERY
        ====================================================================== */
-    .gallery {
-      padding: var(--sp-7) 0;
-    }
+    .gallery { padding: var(--sp-7) 0; }
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -331,9 +314,7 @@
       text-align: left;
       width: 100%;
     }
-    .theme-card:hover {
-      transform: translateY(-2px);
-    }
+    .theme-card:hover { transform: translateY(-2px); }
     .theme-card:focus-visible {
       outline: 2px solid var(--shell-accent);
       outline-offset: 3px;
@@ -345,7 +326,6 @@
     .theme-card .swatch {
       padding: var(--sp-5);
       min-height: 168px;
-      font-family: var(--card-font, var(--font-body));
       font-size: 0.95rem;
       line-height: 1.5;
       position: relative;
@@ -360,7 +340,7 @@
     }
     .theme-card .swatch p {
       margin: 0 0 var(--sp-2);
-      color: var(--card-fg-muted, var(--card-fg));
+      color: var(--card-fg);
       opacity: 0.92;
     }
     .theme-card .swatch .demo-link {
@@ -381,10 +361,7 @@
       font-size: 0.85rem;
     }
     .theme-card .meta .name-block {
-      display: flex;
-      flex-direction: column;
-      gap: 2px;
-      min-width: 0;
+      display: flex; flex-direction: column; gap: 2px; min-width: 0;
     }
     .theme-card .meta .name {
       font-family: var(--font-display);
@@ -401,9 +378,7 @@
       letter-spacing: 0.04em;
     }
     .theme-card .meta .badges {
-      display: flex;
-      gap: var(--sp-2);
-      align-items: center;
+      display: flex; gap: var(--sp-2); align-items: center;
     }
     .ratio-pill {
       font-family: var(--font-mono);
@@ -437,97 +412,161 @@
     }
 
     /* ======================================================================
-       READING PANEL
+       READING SECTION
        ====================================================================== */
-    .reading {
-      padding: var(--sp-7) 0 var(--sp-9);
-    }
+    .reading { padding: var(--sp-7) 0 var(--sp-9); }
 
-    .reading-controls {
+    .command-bar {
       display: grid;
-      grid-template-columns: 1fr;
       gap: var(--sp-4);
-      padding: var(--sp-4) var(--sp-5);
-      background: var(--shell-bg-elevated);
+      padding: var(--sp-4);
+      background: color-mix(in oklch, var(--shell-bg-elevated) 92%, transparent);
       border: 1px solid var(--shell-border);
       border-radius: var(--radius-md);
       margin-bottom: var(--sp-5);
       position: sticky;
-      top: var(--sp-4);
+      top: var(--sp-3);
       z-index: 10;
-      backdrop-filter: blur(6px);
-      background: color-mix(in oklch, var(--shell-bg-elevated) 86%, transparent);
+      backdrop-filter: blur(8px);
     }
-    @media (min-width: 920px) {
-      .reading-controls {
-        grid-template-columns: auto 1fr auto;
-        align-items: center;
-      }
+    @media (min-width: 720px) {
+      .command-bar { padding: var(--sp-4) var(--sp-5); }
     }
-    .current-theme {
+    .cmd-row {
       display: flex;
+      flex-wrap: wrap;
       align-items: center;
-      gap: var(--sp-3);
-      min-width: 0;
+      gap: var(--sp-3) var(--sp-5);
     }
-    .current-theme .label {
+    .cmd-row + .cmd-row {
+      padding-top: var(--sp-3);
+      border-top: 1px solid var(--shell-border);
+    }
+    .cmd-label {
       font-family: var(--font-mono);
       font-size: 0.7rem;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.14em;
       text-transform: uppercase;
       color: var(--shell-fg-3);
+      flex-shrink: 0;
+      min-width: 64px;
+    }
+
+    .current-theme {
+      display: flex; align-items: center; gap: var(--sp-3);
+      flex: 1; min-width: 0;
+    }
+    .current-theme .swatch-dot {
+      width: 16px; height: 16px;
+      border-radius: 50%;
+      background: var(--current-fg, var(--shell-accent));
+      box-shadow: inset 0 0 0 3px var(--current-bg, var(--shell-bg));
+      border: 1px solid var(--shell-border-strong);
+      flex-shrink: 0;
     }
     .current-theme .name {
       font-family: var(--font-display);
       font-weight: 600;
-      font-size: 1.08rem;
+      font-size: 1.05rem;
       letter-spacing: -0.01em;
     }
-    .current-theme .swatch-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: var(--current-fg, var(--shell-accent));
-      box-shadow: inset 0 0 0 2px var(--current-bg, var(--shell-bg));
-      border: 1px solid var(--shell-border-strong);
-      flex-shrink: 0;
+    .current-theme .stats {
+      display: flex; align-items: center; gap: var(--sp-3);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--shell-fg-2);
+      margin-left: auto;
+    }
+    .current-theme .stats .divider {
+      width: 1px; height: 12px; background: var(--shell-border-strong);
+    }
+    .current-theme .stats strong {
+      color: var(--shell-fg);
+      font-weight: 700;
+    }
+    .current-theme .stats .small-label {
+      color: var(--shell-fg-3);
+      font-size: 0.7rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
     }
 
-    .brightness-control {
+    /* Tabs (content) */
+    .tabs {
+      display: inline-flex;
+      gap: 2px;
+      padding: 3px;
+      border-radius: 8px;
+      background: var(--shell-bg-deep);
+      border: 1px solid var(--shell-border);
+    }
+    .tab {
+      padding: var(--sp-2) var(--sp-4);
+      border-radius: 6px;
+      font-size: 0.86rem;
+      color: var(--shell-fg-2);
+      transition: background 180ms var(--ease-out-quart), color 180ms var(--ease-out-quart);
+      white-space: nowrap;
+    }
+    .tab:hover { color: var(--shell-fg); }
+    .tab[aria-selected="true"] {
+      background: var(--shell-bg-raised);
+      color: var(--shell-fg);
+      box-shadow: 0 0 0 1px var(--shell-border-strong);
+    }
+
+    /* Chips (scene, vision) */
+    .chips {
       display: flex;
-      align-items: center;
-      gap: var(--sp-3);
+      flex-wrap: wrap;
+      gap: 6px;
+      flex: 1;
       min-width: 0;
     }
-    .brightness-control label {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--shell-fg-3);
+    .chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--shell-border);
+      background: var(--shell-bg-deep);
+      color: var(--shell-fg-2);
+      font-size: 0.82rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 180ms var(--ease-out-quart), color 180ms var(--ease-out-quart), border-color 180ms var(--ease-out-quart);
       white-space: nowrap;
+    }
+    .chip:hover { color: var(--shell-fg); border-color: var(--shell-border-strong); }
+    .chip[aria-pressed="true"] {
+      background: var(--shell-fg);
+      color: var(--shell-bg-deep);
+      border-color: var(--shell-fg);
+    }
+    .chip .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--chip-color, var(--shell-fg-3));
+    }
+
+    /* Brightness slider */
+    .brightness-control {
+      display: flex; align-items: center; gap: var(--sp-3);
+      flex: 1; min-width: 220px;
     }
     .brightness-slider {
       flex: 1;
-      min-width: 100px;
+      min-width: 80px;
       -webkit-appearance: none;
       appearance: none;
       height: 4px;
       border-radius: 999px;
-      background:
-        linear-gradient(90deg,
-          oklch(20% 0.005 55),
-          oklch(70% 0.06 60),
-          oklch(94% 0.04 80)
-        );
+      background: linear-gradient(90deg,
+        oklch(20% 0.005 55), oklch(70% 0.06 60), oklch(94% 0.04 80));
       outline: none;
       cursor: pointer;
     }
     .brightness-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
+      -webkit-appearance: none; appearance: none;
+      width: 18px; height: 18px;
       border-radius: 50%;
       background: var(--shell-fg);
       border: 2px solid var(--shell-bg-deep);
@@ -537,8 +576,7 @@
     }
     .brightness-slider::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.1); }
     .brightness-slider::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
+      width: 18px; height: 18px;
       border-radius: 50%;
       background: var(--shell-fg);
       border: 2px solid var(--shell-bg-deep);
@@ -546,36 +584,61 @@
     }
     .brightness-value {
       font-family: var(--font-mono);
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       color: var(--shell-fg);
       font-variant-numeric: tabular-nums;
-      min-width: 3.5ch;
+      min-width: 4ch;
       text-align: right;
     }
 
-    .compare-toggle {
+    /* Action buttons */
+    .actions { display: flex; gap: var(--sp-2); margin-left: auto; flex-wrap: wrap; }
+    .btn {
       display: inline-flex;
       align-items: center;
       gap: var(--sp-2);
       padding: var(--sp-2) var(--sp-4);
       border: 1px solid var(--shell-border-strong);
       border-radius: 999px;
-      font-size: 0.85rem;
+      font-size: 0.84rem;
       color: var(--shell-fg);
-      transition: background 200ms var(--ease-out-quart), border-color 200ms var(--ease-out-quart);
+      transition: background 200ms var(--ease-out-quart), border-color 200ms var(--ease-out-quart), color 200ms var(--ease-out-quart);
       white-space: nowrap;
     }
-    .compare-toggle:hover { background: var(--shell-bg-raised); }
-    .compare-toggle[aria-pressed="true"] {
+    .btn:hover { background: var(--shell-bg-raised); }
+    .btn[aria-pressed="true"] {
       background: var(--shell-accent);
       color: var(--shell-bg-deep);
       border-color: var(--shell-accent);
     }
-    .compare-toggle svg {
-      width: 14px;
-      height: 14px;
+    .btn.btn-primary {
+      background: var(--shell-accent);
+      color: var(--shell-bg-deep);
+      border-color: var(--shell-accent);
+    }
+    .btn.btn-primary:hover {
+      background: var(--shell-accent-soft);
+      color: var(--shell-bg-deep);
+    }
+    .btn svg { width: 14px; height: 14px; }
+
+    /* Reading layout: grid with optional customize panel */
+    .reading-layout {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sp-5);
+      align-items: start;
+    }
+    .reading-layout[data-customize="true"] {
+      grid-template-columns: 1fr;
+    }
+    @media (min-width: 1080px) {
+      .reading-layout[data-customize="true"] {
+        grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+      }
     }
 
+    /* Reading panel */
     .reading-panel {
       position: relative;
       border-radius: var(--radius-lg);
@@ -584,13 +647,16 @@
       transition: filter 280ms var(--ease-out-quart);
       filter: brightness(var(--device-brightness, 1));
     }
+    .reading-panel.vision-deutan { filter: brightness(var(--device-brightness, 1)) url(#flt-deutan); }
+    .reading-panel.vision-protan { filter: brightness(var(--device-brightness, 1)) url(#flt-protan); }
+    .reading-panel.vision-tritan { filter: brightness(var(--device-brightness, 1)) url(#flt-tritan); }
 
     .panel-frame {
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: var(--sp-3) var(--sp-5);
-      background: color-mix(in oklch, var(--theme-bg-elevated, var(--shell-bg-elevated)) 100%, transparent);
+      background: var(--theme-bg-elevated, var(--shell-bg-elevated));
       color: var(--theme-fg-muted, var(--shell-fg-2));
       font-family: var(--font-mono);
       font-size: 0.72rem;
@@ -598,28 +664,47 @@
       text-transform: uppercase;
       border-bottom: 1px solid var(--theme-border, var(--shell-border));
     }
-    .panel-frame-dots {
-      display: flex;
-      gap: 6px;
-    }
+    .panel-frame-dots { display: flex; gap: 6px; }
     .panel-frame-dots span {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
+      width: 10px; height: 10px; border-radius: 50%;
       background: var(--theme-fg-muted, var(--shell-fg-3));
       opacity: 0.3;
     }
     .panel-frame-dots span:first-child { opacity: 0.5; }
+    .panel-frame-cast {
+      position: relative;
+    }
+    .panel-frame-cast::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: var(--scene-cast, transparent);
+      mix-blend-mode: hue;
+      opacity: var(--scene-cast-amt, 0);
+    }
+
+    /* Scene cast overlay on panel content */
+    .panel-cast-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: var(--scene-cast, transparent);
+      mix-blend-mode: multiply;
+      opacity: var(--scene-cast-amt, 0);
+      transition: opacity 320ms var(--ease-out-quart);
+      z-index: 1;
+    }
+    .panel-content-wrap { position: relative; }
 
     /* ======================================================================
-       THEMED PROSE / styled per-theme via CSS vars on container
+       PROSE
        ====================================================================== */
     .prose-container {
       background: var(--theme-bg);
       color: var(--theme-fg);
       padding: clamp(var(--sp-5), 4vw, var(--sp-8));
     }
-
     .prose {
       max-width: 68ch;
       margin: 0 auto;
@@ -628,7 +713,6 @@
       line-height: 1.65;
       letter-spacing: 0.005em;
     }
-
     .prose h1, .prose h2, .prose h3, .prose h4 {
       font-family: var(--font-display);
       font-weight: 600;
@@ -649,23 +733,11 @@
       border-top: 1px solid var(--theme-border);
     }
     .prose h2:first-child { border-top: 0; padding-top: 0; margin-top: 0; }
-    .prose h3 {
-      font-size: 1.25rem;
-      margin: var(--sp-6) 0 var(--sp-3);
-    }
-    .prose h4 {
-      font-size: 1.05rem;
-      margin: var(--sp-5) 0 var(--sp-2);
-    }
-    .prose p {
-      margin: 0 0 var(--sp-4);
-      color: var(--theme-fg);
-    }
+    .prose h3 { font-size: 1.25rem; margin: var(--sp-6) 0 var(--sp-3); }
+    .prose h4 { font-size: 1.05rem; margin: var(--sp-5) 0 var(--sp-2); }
+    .prose p { margin: 0 0 var(--sp-4); color: var(--theme-fg); }
     .prose p + p { margin-top: 0; }
-    .prose strong {
-      color: var(--theme-fg-strong, var(--theme-fg));
-      font-weight: 700;
-    }
+    .prose strong { color: var(--theme-fg-strong, var(--theme-fg)); font-weight: 700; }
     .prose em { font-style: italic; }
     .prose a {
       color: var(--theme-link);
@@ -675,9 +747,7 @@
       text-decoration-color: color-mix(in oklch, var(--theme-link) 50%, transparent);
       transition: text-decoration-color 200ms;
     }
-    .prose a:hover {
-      text-decoration-color: var(--theme-link);
-    }
+    .prose a:hover { text-decoration-color: var(--theme-link); }
     .prose code {
       font-family: var(--font-mono);
       font-size: 0.88em;
@@ -696,10 +766,7 @@
       border: 1px solid var(--theme-border);
       margin: var(--sp-4) 0;
     }
-    .prose pre code {
-      background: none;
-      padding: 0;
-    }
+    .prose pre code { background: none; padding: 0; }
     .prose blockquote {
       margin: var(--sp-5) 0;
       padding: var(--sp-2) 0 var(--sp-2) var(--sp-5);
@@ -708,22 +775,10 @@
       color: var(--theme-fg-muted, var(--theme-fg));
       font-size: 1.08rem;
     }
-    .prose ul, .prose ol {
-      margin: var(--sp-4) 0;
-      padding-left: var(--sp-5);
-    }
-    .prose li {
-      margin: var(--sp-2) 0;
-    }
-    .prose li::marker {
-      color: var(--theme-fg-muted, var(--theme-fg));
-    }
-    .prose hr {
-      border: 0;
-      height: 1px;
-      background: var(--theme-border);
-      margin: var(--sp-6) 0;
-    }
+    .prose ul, .prose ol { margin: var(--sp-4) 0; padding-left: var(--sp-5); }
+    .prose li { margin: var(--sp-2) 0; }
+    .prose li::marker { color: var(--theme-fg-muted, var(--theme-fg)); }
+    .prose hr { border: 0; height: 1px; background: var(--theme-border); margin: var(--sp-6) 0; }
     .prose table {
       width: 100%;
       border-collapse: collapse;
@@ -742,17 +797,374 @@
       letter-spacing: -0.005em;
     }
     .prose img {
-      max-width: 100%;
-      height: auto;
+      max-width: 100%; height: auto;
       vertical-align: middle;
       display: inline-block;
       margin: 1px 2px;
     }
     .prose .badges-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--sp-2);
+      display: flex; flex-wrap: wrap; gap: var(--sp-2);
       margin: var(--sp-5) 0;
+    }
+
+    /* ======================================================================
+       DASHBOARD MOCK
+       ====================================================================== */
+    .mock-app {
+      background: var(--theme-bg);
+      color: var(--theme-fg);
+      display: grid;
+      grid-template-columns: 1fr;
+      min-height: 540px;
+    }
+    @media (min-width: 760px) {
+      .mock-app { grid-template-columns: 220px 1fr; }
+    }
+    .mock-sidebar {
+      padding: var(--sp-5);
+      background: var(--theme-bg-elevated);
+      border-right: 1px solid var(--theme-border);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+    }
+    .mock-app-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      display: flex; align-items: center; gap: var(--sp-2);
+      color: var(--theme-fg-strong);
+    }
+    .mock-app-name .app-mark {
+      width: 22px; height: 22px;
+      border-radius: 6px;
+      background: var(--theme-link);
+      display: inline-grid; place-items: center;
+      color: var(--theme-bg);
+      font-size: 0.85rem; font-weight: 800;
+    }
+    .mock-nav { display: flex; flex-direction: column; gap: 2px; }
+    .mock-nav a {
+      padding: var(--sp-2) var(--sp-3);
+      border-radius: 6px;
+      color: var(--theme-fg-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      display: flex; align-items: center; gap: var(--sp-3);
+      transition: background 180ms;
+    }
+    .mock-nav a .nav-icon {
+      width: 14px; height: 14px; flex-shrink: 0;
+      color: var(--theme-fg-muted);
+    }
+    .mock-nav a.active {
+      background: var(--theme-code-bg);
+      color: var(--theme-fg);
+    }
+    .mock-nav a.active .nav-icon { color: var(--theme-link); }
+    .mock-nav a .badge {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      padding: 1px 6px;
+      border-radius: 999px;
+      background: var(--theme-link);
+      color: var(--theme-bg);
+    }
+    .mock-workspace {
+      margin-top: auto;
+      padding: var(--sp-3);
+      border-radius: 8px;
+      border: 1px solid var(--theme-border);
+      font-size: 0.85rem;
+    }
+    .mock-workspace .ws-name { font-weight: 700; color: var(--theme-fg); }
+    .mock-workspace .ws-meta { color: var(--theme-fg-muted); font-size: 0.78rem; }
+
+    .mock-main {
+      padding: var(--sp-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-6);
+      min-width: 0;
+    }
+    .mock-main header h1 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.8rem;
+      letter-spacing: -0.02em;
+      margin: 0 0 var(--sp-2);
+      color: var(--theme-fg);
+    }
+    .mock-main header p {
+      margin: 0;
+      color: var(--theme-fg-muted);
+      font-size: 0.95rem;
+    }
+    .mock-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--sp-3);
+    }
+    .stat {
+      padding: var(--sp-4);
+      border-radius: var(--radius-md);
+      background: var(--theme-bg-elevated);
+      border: 1px solid var(--theme-border);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--theme-fg-muted);
+    }
+    .stat-value {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.85rem;
+      letter-spacing: -0.02em;
+      color: var(--theme-fg-strong);
+      line-height: 1;
+    }
+    .stat-trend {
+      font-size: 0.78rem;
+      color: var(--theme-fg-muted);
+    }
+    .stat-trend.good { color: var(--theme-link); }
+
+    .mock-list h2 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.2rem;
+      margin: 0 0 var(--sp-3);
+      letter-spacing: -0.01em;
+      color: var(--theme-fg);
+    }
+    .task {
+      display: grid;
+      grid-template-columns: auto auto 1fr auto;
+      gap: var(--sp-3);
+      align-items: center;
+      padding: var(--sp-3) var(--sp-4);
+      border-radius: 8px;
+      border: 1px solid var(--theme-border);
+      background: var(--theme-bg-elevated);
+      margin-bottom: var(--sp-2);
+      font-size: 0.92rem;
+      color: var(--theme-fg);
+    }
+    .task:hover { border-color: color-mix(in oklch, var(--theme-border) 50%, var(--theme-fg) 20%); }
+    .task .task-status {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      border: 1.5px solid var(--theme-fg-muted);
+      flex-shrink: 0;
+    }
+    .task .task-status.open { border-color: var(--theme-link); }
+    .task .task-status.in-review {
+      border-color: var(--theme-link);
+      background: conic-gradient(var(--theme-link) 50%, transparent 50%);
+    }
+    .task .task-status.done {
+      background: var(--theme-link);
+      border-color: var(--theme-link);
+      position: relative;
+    }
+    .task .task-status.done::after {
+      content: '✓';
+      position: absolute;
+      inset: 0;
+      display: grid; place-items: center;
+      font-size: 0.7rem; font-weight: 700;
+      color: var(--theme-bg);
+    }
+    .task .task-id {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--theme-fg-muted);
+      letter-spacing: 0.04em;
+    }
+    .task .task-title {
+      font-weight: 500;
+      color: var(--theme-fg);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .task .task-meta {
+      font-size: 0.78rem;
+      color: var(--theme-fg-muted);
+      text-align: right;
+    }
+    @media (max-width: 640px) {
+      .task { grid-template-columns: auto 1fr; }
+      .task .task-id, .task .task-meta { display: none; }
+    }
+
+    /* ======================================================================
+       SETTINGS MOCK
+       ====================================================================== */
+    .mock-settings {
+      background: var(--theme-bg);
+      color: var(--theme-fg);
+      padding: clamp(var(--sp-5), 4vw, var(--sp-7));
+    }
+    .mock-settings-wrap { max-width: 720px; margin: 0 auto; }
+    .mock-settings header {
+      padding-bottom: var(--sp-5);
+      border-bottom: 1px solid var(--theme-border);
+      margin-bottom: var(--sp-5);
+    }
+    .mock-settings header h1 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 2rem;
+      letter-spacing: -0.025em;
+      margin: 0 0 var(--sp-2);
+      color: var(--theme-fg-strong);
+    }
+    .mock-settings header p {
+      margin: 0;
+      color: var(--theme-fg-muted);
+      font-size: 0.95rem;
+    }
+    .settings-tabs {
+      display: flex;
+      gap: 2px;
+      margin-bottom: var(--sp-5);
+      padding: 3px;
+      border-radius: 8px;
+      background: var(--theme-bg-elevated);
+      border: 1px solid var(--theme-border);
+      width: fit-content;
+    }
+    .settings-tab {
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.86rem;
+      color: var(--theme-fg-muted);
+      transition: background 180ms, color 180ms;
+    }
+    .settings-tab.active {
+      background: var(--theme-bg);
+      color: var(--theme-fg-strong);
+      box-shadow: 0 0 0 1px var(--theme-border);
+    }
+    .setting-group { margin-bottom: var(--sp-6); }
+    .setting-group h2 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+      margin: 0 0 var(--sp-3);
+      color: var(--theme-fg);
+    }
+    .setting-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--sp-5);
+      padding: var(--sp-4);
+      background: var(--theme-bg-elevated);
+      border: 1px solid var(--theme-border);
+      border-radius: 8px;
+      margin-bottom: var(--sp-2);
+    }
+    .setting-info { flex: 1; min-width: 0; }
+    .setting-info strong {
+      display: block;
+      font-weight: 700;
+      color: var(--theme-fg);
+      font-size: 0.96rem;
+    }
+    .setting-info span {
+      font-size: 0.85rem;
+      color: var(--theme-fg-muted);
+    }
+    .setting-control { flex-shrink: 0; }
+    .ui-select {
+      padding: 6px 12px;
+      border-radius: 6px;
+      border: 1px solid var(--theme-border);
+      background: var(--theme-code-bg);
+      color: var(--theme-fg);
+      font-size: 0.86rem;
+      font-family: var(--font-body);
+    }
+    .ui-toggle {
+      width: 40px; height: 22px;
+      border-radius: 999px;
+      background: var(--theme-border);
+      position: relative;
+      cursor: pointer;
+      transition: background 200ms;
+    }
+    .ui-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      background: var(--theme-fg-muted);
+      transition: transform 240ms var(--ease-out-quart), background 200ms;
+    }
+    .ui-toggle.on {
+      background: var(--theme-link);
+    }
+    .ui-toggle.on::after {
+      transform: translateX(18px);
+      background: var(--theme-bg);
+    }
+    .theme-picker {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: var(--sp-2);
+    }
+    .theme-pick {
+      aspect-ratio: 1.6;
+      border-radius: 6px;
+      position: relative;
+      cursor: pointer;
+      border: 1.5px solid transparent;
+      box-shadow: inset 0 0 0 1px var(--theme-border);
+      display: flex;
+      align-items: flex-end;
+      padding: 4px 6px;
+      font-size: 0.7rem;
+      font-family: var(--font-mono);
+      letter-spacing: 0.04em;
+    }
+    .theme-pick.active {
+      border-color: var(--theme-link);
+      box-shadow: inset 0 0 0 1px var(--theme-link), 0 0 0 3px color-mix(in oklch, var(--theme-link) 30%, transparent);
+    }
+    .save-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--sp-3);
+      padding-top: var(--sp-5);
+      border-top: 1px solid var(--theme-border);
+      margin-top: var(--sp-6);
+    }
+    .mock-btn {
+      padding: var(--sp-2) var(--sp-5);
+      border-radius: 8px;
+      border: 1px solid var(--theme-border);
+      background: var(--theme-bg-elevated);
+      color: var(--theme-fg);
+      font-size: 0.92rem;
+      cursor: pointer;
+    }
+    .mock-btn.primary {
+      background: var(--theme-link);
+      color: var(--theme-bg);
+      border-color: var(--theme-link);
+      font-weight: 600;
     }
 
     /* ======================================================================
@@ -764,13 +1176,8 @@
       transition: grid-template-rows 480ms var(--ease-out-expo);
       overflow: hidden;
     }
-    .compare-wrapper[data-open="true"] {
-      grid-template-rows: 1fr;
-    }
-    .compare-inner {
-      min-height: 0;
-      padding-top: var(--sp-5);
-    }
+    .compare-wrapper[data-open="true"] { grid-template-rows: 1fr; }
+    .compare-inner { min-height: 0; padding-top: var(--sp-5); }
     .compare-grid {
       display: grid;
       grid-template-columns: 1fr;
@@ -789,10 +1196,11 @@
       color: var(--theme-fg);
       display: flex;
       flex-direction: column;
+      position: relative;
     }
     .compare-col .compare-head {
       padding: var(--sp-3) var(--sp-4);
-      background: color-mix(in oklch, var(--theme-bg) 50%, oklch(50% 0 0));
+      background: var(--theme-bg-elevated);
       color: var(--theme-fg);
       font-family: var(--font-mono);
       font-size: 0.7rem;
@@ -803,17 +1211,14 @@
       align-items: center;
       border-bottom: 1px solid var(--theme-border);
     }
-    .compare-col .compare-head .ratio {
-      color: var(--theme-fg);
-      opacity: 0.7;
-    }
+    .compare-col .compare-head .ratio { color: var(--theme-fg); opacity: 0.7; }
     .compare-col .compare-content {
       padding: var(--sp-5);
       font-family: var(--font-body);
       font-size: 0.95rem;
       line-height: 1.55;
       flex: 1;
-      max-height: 480px;
+      max-height: 520px;
       overflow-y: auto;
     }
     .compare-col .compare-content h3 {
@@ -822,12 +1227,271 @@
       margin: 0 0 var(--sp-3);
       font-weight: 600;
     }
-    .compare-col .compare-content p {
-      margin: 0 0 var(--sp-3);
+    .compare-col .compare-content p { margin: 0 0 var(--sp-3); }
+    .compare-col .compare-content a { color: var(--theme-link); text-decoration: underline; }
+    .compare-col .compare-content ul { padding-left: var(--sp-4); margin: var(--sp-3) 0; }
+    .compare-col .compare-content blockquote {
+      border-left: 2px solid var(--theme-link);
+      padding-left: var(--sp-3);
+      margin: var(--sp-3) 0;
+      color: var(--theme-fg-muted);
+      font-style: italic;
     }
-    .compare-col .compare-content a {
-      color: var(--theme-link);
-      text-decoration: underline;
+    .compare-col .compare-content code {
+      font-family: var(--font-mono);
+      font-size: 0.85em;
+      background: var(--theme-code-bg);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    /* ======================================================================
+       CUSTOMIZE PANEL
+       ====================================================================== */
+    .customize-panel {
+      background: var(--shell-bg-elevated);
+      border: 1px solid var(--shell-border);
+      border-radius: var(--radius-md);
+      padding: var(--sp-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sp-5);
+      max-height: 80vh;
+      overflow-y: auto;
+      position: sticky;
+      top: 130px;
+    }
+    .customize-panel h3 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.1rem;
+      letter-spacing: -0.01em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .customize-panel h3 .reset-btn {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--shell-fg-3);
+      cursor: pointer;
+    }
+    .customize-panel h3 .reset-btn:hover { color: var(--shell-fg); }
+    .customize-section h4 {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--shell-fg-3);
+      margin: 0 0 var(--sp-3);
+      display: flex; align-items: center; gap: var(--sp-2);
+    }
+    .customize-section h4 .swatch-block {
+      width: 14px; height: 14px;
+      border-radius: 3px;
+      border: 1px solid var(--shell-border-strong);
+    }
+    .control-stack { display: flex; flex-direction: column; gap: var(--sp-3); }
+    .control-row {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: var(--sp-3);
+      align-items: center;
+    }
+    .control-row label {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--shell-fg-2);
+      min-width: 16px;
+    }
+    .control-row input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      height: 4px;
+      border-radius: 999px;
+      background: var(--shell-bg-deep);
+      outline: none;
+      cursor: pointer;
+    }
+    .control-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--shell-fg);
+      border: 2px solid var(--shell-bg-deep);
+      cursor: grab;
+    }
+    .control-row input[type="range"]::-moz-range-thumb {
+      width: 14px; height: 14px;
+      border-radius: 50%;
+      background: var(--shell-fg);
+      border: 2px solid var(--shell-bg-deep);
+      cursor: grab;
+    }
+    .control-row .value {
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      color: var(--shell-fg);
+      font-variant-numeric: tabular-nums;
+      min-width: 4ch;
+      text-align: right;
+    }
+    .live-readout {
+      padding: var(--sp-4);
+      border-radius: var(--radius-sm);
+      background: var(--shell-bg-deep);
+      border: 1px solid var(--shell-border);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--sp-3);
+    }
+    .live-readout .readout-block { display: flex; flex-direction: column; gap: 4px; }
+    .live-readout .readout-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--shell-fg-3);
+    }
+    .live-readout .readout-value {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: var(--shell-fg);
+      letter-spacing: -0.01em;
+    }
+    .live-readout .readout-status {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+    }
+    .live-readout .readout-status.pass-aaa { color: var(--shell-success); }
+    .live-readout .readout-status.pass-aa { color: var(--shell-accent); }
+    .live-readout .readout-status.fail { color: var(--shell-danger); }
+
+    /* ======================================================================
+       TOKEN MODAL
+       ====================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: oklch(5% 0.01 55 / 0.7);
+      backdrop-filter: blur(6px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--sp-4);
+    }
+    .modal-backdrop[data-open="true"] {
+      display: flex;
+      animation: fade-in 220ms var(--ease-out-quart);
+    }
+    @keyframes fade-in {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal {
+      background: var(--shell-bg-elevated);
+      border: 1px solid var(--shell-border-strong);
+      border-radius: var(--radius-lg);
+      max-width: 760px;
+      width: 100%;
+      max-height: 86vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 30px 80px -10px rgb(0 0 0 / 0.5);
+    }
+    .modal-header {
+      padding: var(--sp-5);
+      border-bottom: 1px solid var(--shell-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sp-4);
+    }
+    .modal-header h3 {
+      font-family: var(--font-display);
+      font-size: 1.2rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin: 0;
+    }
+    .modal-header p {
+      margin: 0;
+      font-size: 0.85rem;
+      color: var(--shell-fg-2);
+    }
+    .modal-close {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      display: grid; place-items: center;
+      color: var(--shell-fg-2);
+      transition: background 180ms, color 180ms;
+    }
+    .modal-close:hover { background: var(--shell-bg-raised); color: var(--shell-fg); }
+    .modal-tabs {
+      display: flex;
+      padding: 0 var(--sp-5);
+      gap: var(--sp-5);
+      border-bottom: 1px solid var(--shell-border);
+    }
+    .modal-tab {
+      padding: var(--sp-3) 0;
+      font-size: 0.9rem;
+      color: var(--shell-fg-3);
+      border-bottom: 2px solid transparent;
+      transition: color 180ms, border-color 180ms;
+    }
+    .modal-tab[aria-selected="true"] {
+      color: var(--shell-fg);
+      border-bottom-color: var(--shell-accent);
+    }
+    .modal-body {
+      padding: var(--sp-5);
+      overflow-y: auto;
+      flex: 1;
+    }
+    .code-block {
+      position: relative;
+      background: var(--shell-bg-deep);
+      border: 1px solid var(--shell-border);
+      border-radius: var(--radius-sm);
+      padding: var(--sp-4);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      line-height: 1.6;
+      color: var(--shell-fg);
+      white-space: pre-wrap;
+      overflow-x: auto;
+      max-height: 50vh;
+      overflow-y: auto;
+    }
+    .copy-btn {
+      position: absolute;
+      top: var(--sp-3);
+      right: var(--sp-3);
+      padding: 5px 10px;
+      border-radius: 6px;
+      background: var(--shell-bg-raised);
+      color: var(--shell-fg);
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      border: 1px solid var(--shell-border-strong);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .copy-btn:hover { background: var(--shell-accent); color: var(--shell-bg-deep); border-color: var(--shell-accent); }
+    .copy-btn.copied {
+      background: var(--shell-success);
+      color: var(--shell-bg-deep);
+      border-color: var(--shell-success);
     }
 
     /* ======================================================================
@@ -867,7 +1531,7 @@
     .footer a:hover { color: var(--shell-fg); }
 
     /* ======================================================================
-       MOTION PREFERENCES
+       REDUCED MOTION
        ====================================================================== */
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
@@ -876,7 +1540,6 @@
       }
     }
 
-    /* small flourish: subtle grain on shell background only */
     .grain {
       position: fixed;
       inset: 0;
@@ -890,9 +1553,39 @@
   </style>
 </head>
 <body>
+  <!-- ============================================================
+       SVG filter definitions for CVD simulation
+       ============================================================ -->
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true">
+    <defs>
+      <filter id="flt-deutan">
+        <feColorMatrix type="matrix" values="
+          0.367 0.861 -0.228 0 0
+          0.280 0.673  0.047 0 0
+         -0.012 0.043  0.969 0 0
+          0     0      0     1 0"/>
+      </filter>
+      <filter id="flt-protan">
+        <feColorMatrix type="matrix" values="
+          0.152 1.053 -0.205 0 0
+          0.115 0.786  0.099 0 0
+         -0.004 -0.048 1.052 0 0
+          0     0      0     1 0"/>
+      </filter>
+      <filter id="flt-tritan">
+        <feColorMatrix type="matrix" values="
+          1.255 -0.077 -0.178 0 0
+         -0.078 0.931  0.148  0 0
+          0.005 0.691  0.304  0 0
+          0     0      0      1 0"/>
+      </filter>
+    </defs>
+  </svg>
+
   <div class="grain" aria-hidden="true"></div>
 
   <div class="page">
+    <!-- TOPBAR -->
     <header class="topbar">
       <div class="brand">
         <span class="brand-mark" aria-hidden="true">
@@ -902,11 +1595,12 @@
       </div>
       <div class="topbar-meta">
         <span class="dot-wrap"><span class="dot"></span></span>
-        <span>WCAG 2.1 / Computed live</span>
+        <span>WCAG 2.1 &amp; APCA / Computed live</span>
         <span>OKLCH</span>
       </div>
     </header>
 
+    <!-- HERO -->
     <section class="hero">
       <div>
         <span class="eyebrow"><b>01</b> A case for the middle</span>
@@ -915,7 +1609,6 @@
           <span class="ink-light">is too</span> <em>dark.</em>
         </h1>
       </div>
-
       <aside class="hero-side">
         <p>
           At 30% screen brightness in a sunlit room, pure white on pure black disappears. So does pure black on pure white. Both extremes assume a viewing environment that almost never exists.
@@ -928,7 +1621,6 @@
           <span class="arrow">↓</span>
         </span>
       </aside>
-
       <div class="ambient">
         <span class="ambient-label">Device brightness reality</span>
         <div>
@@ -943,6 +1635,7 @@
       </div>
     </section>
 
+    <!-- GALLERY -->
     <section class="gallery" aria-labelledby="gallery-head">
       <div class="section-head">
         <h2 id="gallery-head">Six middle-ground themes</h2>
@@ -951,262 +1644,397 @@
       <div class="gallery-grid" id="gallery-grid" role="tablist"></div>
     </section>
 
+    <!-- READING -->
     <section class="reading" aria-labelledby="reading-head">
       <div class="section-head">
         <h2 id="reading-head">Read it through the theme</h2>
-        <span class="index">Drag brightness, then compare</span>
+        <span class="index">Switch content. Dim the room. Compare.</span>
       </div>
 
-      <div class="reading-controls">
-        <div class="current-theme">
-          <span class="swatch-dot" id="current-swatch" aria-hidden="true"></span>
-          <div>
-            <div class="label">Reading in</div>
-            <div class="name" id="current-name">Nokia Amber</div>
-          </div>
-        </div>
-
-        <div class="brightness-control">
-          <label for="brightness-slider">Screen brightness</label>
-          <input
-            type="range"
-            id="brightness-slider"
-            class="brightness-slider"
-            min="20"
-            max="100"
-            value="100"
-            step="5"
-            aria-valuetext="100 percent"
-          />
-          <span class="brightness-value" id="brightness-value">100%</span>
-        </div>
-
-        <button class="compare-toggle" id="compare-toggle" aria-pressed="false">
-          <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <rect x="1" y="2" width="4" height="12" rx="1" fill="currentColor" opacity="0.4"/>
-            <rect x="6" y="2" width="4" height="12" rx="1" fill="currentColor"/>
-            <rect x="11" y="2" width="4" height="12" rx="1" fill="currentColor" opacity="0.4"/>
-          </svg>
-          <span>Compare to dark & light</span>
-        </button>
-      </div>
-
-      <div class="reading-panel" id="reading-panel">
-        <div class="panel-frame">
-          <span class="panel-frame-dots"><span></span><span></span><span></span></span>
-          <span id="panel-frame-meta">awesome-readable-design / README.md</span>
-          <span id="panel-frame-ratio">— : 1</span>
-        </div>
-        <div class="prose-container" id="prose-container">
-          <article class="prose" id="prose"></article>
-        </div>
-      </div>
-
-      <div class="compare-wrapper" id="compare-wrapper" data-open="false">
-        <div class="compare-inner">
-          <div class="compare-grid">
-            <div class="compare-col" id="col-dark">
-              <div class="compare-head">
-                <span>True Dark</span>
-                <span class="ratio">21.00 : 1</span>
-              </div>
-              <div class="compare-content" id="col-dark-content"></div>
-            </div>
-            <div class="compare-col" id="col-active">
-              <div class="compare-head">
-                <span id="col-active-name">This Theme</span>
-                <span class="ratio" id="col-active-ratio">—</span>
-              </div>
-              <div class="compare-content" id="col-active-content"></div>
-            </div>
-            <div class="compare-col" id="col-light">
-              <div class="compare-head">
-                <span>True Light</span>
-                <span class="ratio">21.00 : 1</span>
-              </div>
-              <div class="compare-content" id="col-light-content"></div>
+      <div class="command-bar" role="region" aria-label="Theme controls">
+        <div class="cmd-row">
+          <div class="current-theme">
+            <span class="swatch-dot" id="current-swatch" aria-hidden="true"></span>
+            <span class="name" id="current-name">Nokia Amber</span>
+            <div class="stats">
+              <span><span class="small-label">WCAG</span> <strong id="current-ratio">—</strong></span>
+              <span class="divider" aria-hidden="true"></span>
+              <span><span class="small-label">Level</span> <strong id="current-level">—</strong></span>
+              <span class="divider" aria-hidden="true"></span>
+              <span><span class="small-label">APCA</span> <strong id="current-apca">—</strong></span>
             </div>
           </div>
         </div>
+
+        <div class="cmd-row">
+          <span class="cmd-label">Content</span>
+          <div class="tabs" role="tablist" id="content-tabs">
+            <button class="tab" role="tab" data-content="readme" aria-selected="true">README</button>
+            <button class="tab" role="tab" data-content="dashboard" aria-selected="false">Dashboard</button>
+            <button class="tab" role="tab" data-content="settings" aria-selected="false">Settings</button>
+          </div>
+        </div>
+
+        <div class="cmd-row">
+          <span class="cmd-label">Scene</span>
+          <div class="chips" id="scene-chips" role="group" aria-label="Ambient scene"></div>
+        </div>
+
+        <div class="cmd-row">
+          <span class="cmd-label">Vision</span>
+          <div class="chips" id="vision-chips" role="group" aria-label="Color vision simulation">
+            <button class="chip" data-vision="normal" aria-pressed="true">Normal</button>
+            <button class="chip" data-vision="deutan" aria-pressed="false">Deuteranopia</button>
+            <button class="chip" data-vision="protan" aria-pressed="false">Protanopia</button>
+            <button class="chip" data-vision="tritan" aria-pressed="false">Tritanopia</button>
+          </div>
+        </div>
+
+        <div class="cmd-row">
+          <div class="brightness-control">
+            <span class="cmd-label">☀</span>
+            <label class="sr-only" for="brightness-slider">Screen brightness</label>
+            <input type="range" id="brightness-slider" class="brightness-slider"
+              min="20" max="100" value="100" step="5" aria-valuetext="100 percent" />
+            <span class="brightness-value" id="brightness-value">100%</span>
+          </div>
+          <div class="actions">
+            <button class="btn" id="compare-toggle" aria-pressed="false">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <rect x="1" y="2" width="4" height="12" rx="1" fill="currentColor" opacity="0.4"/>
+                <rect x="6" y="2" width="4" height="12" rx="1" fill="currentColor"/>
+                <rect x="11" y="2" width="4" height="12" rx="1" fill="currentColor" opacity="0.4"/>
+              </svg>
+              <span>Compare</span>
+            </button>
+            <button class="btn" id="customize-toggle" aria-pressed="false">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="4" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="12" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M1 8h1m4 0h4m2 0h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              <span>Customize</span>
+            </button>
+            <button class="btn btn-primary" id="copy-tokens">
+              <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <rect x="4" y="3" width="8" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 6v6a2 2 0 002 2h5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              </svg>
+              <span>Copy tokens</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="reading-layout" id="reading-layout" data-customize="false">
+        <div>
+          <div class="reading-panel" id="reading-panel">
+            <div class="panel-frame">
+              <span class="panel-frame-dots"><span></span><span></span><span></span></span>
+              <span id="panel-frame-meta">awesome-readable-design / README.md</span>
+              <span id="panel-frame-ratio">— : 1</span>
+            </div>
+            <div class="panel-content-wrap">
+              <div class="panel-cast-overlay" aria-hidden="true"></div>
+              <div id="content-mount"></div>
+            </div>
+          </div>
+
+          <div class="compare-wrapper" id="compare-wrapper" data-open="false">
+            <div class="compare-inner">
+              <div class="compare-grid">
+                <div class="compare-col" id="col-dark">
+                  <div class="compare-head">
+                    <span>True Dark</span>
+                    <span class="ratio">21.00 : 1</span>
+                  </div>
+                  <div class="compare-content" id="col-dark-content"></div>
+                </div>
+                <div class="compare-col" id="col-active">
+                  <div class="compare-head">
+                    <span id="col-active-name">This Theme</span>
+                    <span class="ratio" id="col-active-ratio">—</span>
+                  </div>
+                  <div class="compare-content" id="col-active-content"></div>
+                </div>
+                <div class="compare-col" id="col-light">
+                  <div class="compare-head">
+                    <span>True Light</span>
+                    <span class="ratio">21.00 : 1</span>
+                  </div>
+                  <div class="compare-content" id="col-light-content"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Customize panel -->
+        <aside class="customize-panel" id="customize-panel" hidden>
+          <h3>
+            Customize theme
+            <button class="reset-btn" id="customize-reset">Reset</button>
+          </h3>
+
+          <div class="customize-section">
+            <h4><span class="swatch-block" id="cust-fg-swatch"></span> Foreground</h4>
+            <div class="control-stack">
+              <div class="control-row">
+                <label>L</label>
+                <input type="range" id="cust-fg-l" min="0" max="100" step="0.5" />
+                <span class="value" id="cust-fg-l-val">0</span>
+              </div>
+              <div class="control-row">
+                <label>C</label>
+                <input type="range" id="cust-fg-c" min="0" max="0.4" step="0.005" />
+                <span class="value" id="cust-fg-c-val">0</span>
+              </div>
+              <div class="control-row">
+                <label>H</label>
+                <input type="range" id="cust-fg-h" min="0" max="360" step="1" />
+                <span class="value" id="cust-fg-h-val">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="customize-section">
+            <h4><span class="swatch-block" id="cust-bg-swatch"></span> Background</h4>
+            <div class="control-stack">
+              <div class="control-row">
+                <label>L</label>
+                <input type="range" id="cust-bg-l" min="0" max="100" step="0.5" />
+                <span class="value" id="cust-bg-l-val">0</span>
+              </div>
+              <div class="control-row">
+                <label>C</label>
+                <input type="range" id="cust-bg-c" min="0" max="0.4" step="0.005" />
+                <span class="value" id="cust-bg-c-val">0</span>
+              </div>
+              <div class="control-row">
+                <label>H</label>
+                <input type="range" id="cust-bg-h" min="0" max="360" step="1" />
+                <span class="value" id="cust-bg-h-val">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="customize-section">
+            <h4><span class="swatch-block" id="cust-link-swatch"></span> Link</h4>
+            <div class="control-stack">
+              <div class="control-row">
+                <label>L</label>
+                <input type="range" id="cust-link-l" min="0" max="100" step="0.5" />
+                <span class="value" id="cust-link-l-val">0</span>
+              </div>
+              <div class="control-row">
+                <label>C</label>
+                <input type="range" id="cust-link-c" min="0" max="0.4" step="0.005" />
+                <span class="value" id="cust-link-c-val">0</span>
+              </div>
+              <div class="control-row">
+                <label>H</label>
+                <input type="range" id="cust-link-h" min="0" max="360" step="1" />
+                <span class="value" id="cust-link-h-val">0</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="live-readout">
+            <div class="readout-block">
+              <span class="readout-label">WCAG ratio</span>
+              <span class="readout-value" id="cust-ratio">—</span>
+              <span class="readout-status" id="cust-level">—</span>
+            </div>
+            <div class="readout-block">
+              <span class="readout-label">APCA Lc</span>
+              <span class="readout-value" id="cust-apca">—</span>
+              <span class="readout-status" id="cust-apca-status">—</span>
+            </div>
+          </div>
+        </aside>
       </div>
     </section>
 
+    <!-- FOOTER -->
     <footer class="footer">
       <div>
         <h5>About this artifact</h5>
-        <p>
-          A one-page case for calibrated dark mode. The shell uses the Warm Slate theme, one of the six. The argument is the design.
-        </p>
-        <p>
-          Built as a single static HTML file. No build step, no tracking, no dependencies. Open it from a USB stick if you want.
-        </p>
+        <p>A one-page case for calibrated dark mode. The shell uses a warm slate palette, one of the six. The argument is the design.</p>
+        <p>Built as a single static HTML file. No build step, no tracking, no dependencies. Open it from a USB stick if you want.</p>
       </div>
       <div>
         <h5>Methodology</h5>
-        <p>
-          Contrast ratios computed from OKLCH coordinates via OKLab → linear sRGB → WCAG 2.1 relative luminance.
-        </p>
-        <p>
-          AA: 4.5:1 body, 3:1 large. AAA: 7:1 body, 4.5:1 large.
-        </p>
+        <p>Contrast ratios computed from OKLCH coordinates via OKLab to linear sRGB to WCAG 2.1 relative luminance. APCA Lc per the Myndex reference algorithm.</p>
+        <p>AA: 4.5:1 body, 3:1 large. AAA: 7:1 body, 4.5:1 large. APCA Lc 75+ is body-readable.</p>
       </div>
       <div>
         <h5>References</h5>
-        <p>
-          Nokia 3310 amber LCD. Kindle Paperwhite warm frontlight. Solarized by Ethan Schoonover. APCA contrast (Andrew Somers).
-        </p>
+        <p>Nokia 3310 amber LCD. Kindle Paperwhite warm frontlight. Solarized by Ethan Schoonover. APCA by Andrew Somers.</p>
       </div>
     </footer>
   </div>
 
+  <!-- TOKEN EXPORT MODAL -->
+  <div class="modal-backdrop" id="token-modal" data-open="false" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <div>
+          <h3 id="modal-title">Theme tokens</h3>
+          <p id="modal-subtitle">Nokia Amber</p>
+        </div>
+        <button class="modal-close" id="modal-close" aria-label="Close">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-tabs" role="tablist">
+        <button class="modal-tab" data-format="css" aria-selected="true">CSS variables</button>
+        <button class="modal-tab" data-format="tailwind" aria-selected="false">Tailwind config</button>
+        <button class="modal-tab" data-format="json" aria-selected="false">JSON</button>
+      </div>
+      <div class="modal-body">
+        <div class="code-block" id="code-output"></div>
+      </div>
+    </div>
+  </div>
+
   <script>
+    'use strict';
+
     // ========================================================================
-    // COLOR MATH / OKLCH → linear sRGB → relative luminance → WCAG ratio
-    // L is 0..1, C is 0..~0.4, H is degrees
+    // COLOR MATH
     // ========================================================================
     function oklchToLinearRgb(L, C, H) {
       const hRad = (H * Math.PI) / 180;
       const a = C * Math.cos(hRad);
       const b = C * Math.sin(hRad);
-
       const l_ = L + 0.3963377774 * a + 0.2158037573 * b;
       const m_ = L - 0.1055613458 * a - 0.0638541728 * b;
       const s_ = L - 0.0894841775 * a - 1.2914855480 * b;
-
-      const l = l_ ** 3;
-      const m = m_ ** 3;
-      const s = s_ ** 3;
-
+      const l = l_ ** 3, m = m_ ** 3, s = s_ ** 3;
       return [
         +4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s,
         -1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s,
         -0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s,
       ];
     }
-
     function linearToSrgb(v) {
-      const clamped = Math.max(0, Math.min(1, v));
-      return clamped <= 0.0031308
-        ? 12.92 * clamped
-        : 1.055 * Math.pow(clamped, 1 / 2.4) - 0.055;
+      const c = Math.max(0, Math.min(1, v));
+      return c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1/2.4) - 0.055;
     }
-
     function oklchToSrgb([L, C, H]) {
       const [r, g, b] = oklchToLinearRgb(L, C, H);
       return [linearToSrgb(r), linearToSrgb(g), linearToSrgb(b)];
     }
-
+    function oklchToHex([L, C, H]) {
+      const [r, g, b] = oklchToSrgb([L, C, H]);
+      const to255 = (v) => Math.round(Math.max(0, Math.min(1, v)) * 255);
+      const toHex = (n) => n.toString(16).padStart(2, '0');
+      return `#${toHex(to255(r))}${toHex(to255(g))}${toHex(to255(b))}`;
+    }
     function relativeLuminance([r, g, b]) {
-      const ch = (v) =>
-        v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      const ch = (v) => v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
       return 0.2126 * ch(r) + 0.7152 * ch(g) + 0.0722 * ch(b);
     }
-
     function contrastRatio(fgOklch, bgOklch) {
       const lFg = relativeLuminance(oklchToSrgb(fgOklch));
       const lBg = relativeLuminance(oklchToSrgb(bgOklch));
       const [bright, dark] = lFg > lBg ? [lFg, lBg] : [lBg, lFg];
       return (bright + 0.05) / (dark + 0.05);
     }
-
     function wcagLevel(ratio) {
       if (ratio >= 7) return { label: 'AAA', class: 'pass-aaa' };
       if (ratio >= 4.5) return { label: 'AA', class: 'pass-aa' };
       return { label: 'FAIL', class: 'fail' };
     }
-
+    // APCA - simplified reference implementation (Myndex SAPC-08)
+    function apcaContrast(fgOklch, bgOklch) {
+      const [fgR, fgG, fgB] = oklchToSrgb(fgOklch);
+      const [bgR, bgG, bgB] = oklchToSrgb(bgOklch);
+      const sRGBtoY = (r, g, b) => {
+        const exp = 2.4;
+        const r0 = Math.pow(Math.max(0, Math.min(1, r)), exp);
+        const g0 = Math.pow(Math.max(0, Math.min(1, g)), exp);
+        const b0 = Math.pow(Math.max(0, Math.min(1, b)), exp);
+        return 0.2126729 * r0 + 0.7151522 * g0 + 0.0721750 * b0;
+      };
+      let Ytxt = sRGBtoY(fgR, fgG, fgB);
+      let Ybg = sRGBtoY(bgR, bgG, bgB);
+      const blkThrs = 0.022, blkClmp = 1.414;
+      if (Ytxt < blkThrs) Ytxt += Math.pow(blkThrs - Ytxt, blkClmp);
+      if (Ybg < blkThrs) Ybg += Math.pow(blkThrs - Ybg, blkClmp);
+      if (Math.abs(Ybg - Ytxt) < 0.0005) return 0;
+      let SAPC = 0;
+      if (Ybg > Ytxt) {
+        SAPC = (Math.pow(Ybg, 0.56) - Math.pow(Ytxt, 0.57)) * 1.14;
+        const offset = 0.027;
+        SAPC = SAPC < offset ? 0 : SAPC - offset;
+      } else {
+        SAPC = (Math.pow(Ybg, 0.65) - Math.pow(Ytxt, 0.62)) * 1.14;
+        const offset = 0.027;
+        SAPC = SAPC > -offset ? 0 : SAPC + offset;
+      }
+      return SAPC * 100;
+    }
+    function apcaLevel(lc) {
+      const abs = Math.abs(lc);
+      if (abs >= 90) return { label: 'EXCELLENT', class: 'pass-aaa' };
+      if (abs >= 75) return { label: 'BODY READABLE', class: 'pass-aaa' };
+      if (abs >= 60) return { label: 'FLUENT', class: 'pass-aa' };
+      if (abs >= 45) return { label: 'CONTENT', class: 'pass-aa' };
+      return { label: 'LOW', class: 'fail' };
+    }
     function oklchCss([L, C, H]) {
       return `oklch(${(L * 100).toFixed(1)}% ${C.toFixed(3)} ${H.toFixed(0)})`;
     }
 
     // ========================================================================
-    // THEME DEFINITIONS
+    // THEMES
     // ========================================================================
     const THEMES = [
-      {
-        id: 'nokia',
-        name: 'Nokia Amber',
-        ref: 'Nokia 3310 LCD, 2000',
-        bg:          [0.080, 0.012, 60],
-        bgElevated:  [0.115, 0.014, 60],
-        fg:          [0.760, 0.140, 80],
-        fgStrong:    [0.870, 0.150, 80],
-        fgMuted:     [0.620, 0.110, 80],
-        border:      [0.200, 0.040, 75],
-        link:        [0.820, 0.140, 65],
-        codeBg:      [0.150, 0.025, 70],
-      },
-      {
-        id: 'warm-slate',
-        name: 'Warm Slate',
-        ref: 'Off-white on warm dark',
-        bg:          [0.150, 0.012, 65],
-        bgElevated:  [0.195, 0.014, 65],
-        fg:          [0.870, 0.018, 75],
-        fgStrong:    [0.950, 0.020, 75],
-        fgMuted:     [0.700, 0.020, 75],
-        border:      [0.260, 0.014, 65],
-        link:        [0.780, 0.110, 60],
-        codeBg:      [0.220, 0.014, 65],
-      },
-      {
-        id: 'solarized',
-        name: 'Solarized Dark',
-        ref: 'Ethan Schoonover, 2011',
-        bg:          [0.245, 0.040, 195],
-        bgElevated:  [0.285, 0.038, 195],
-        fg:          [0.770, 0.045, 85],
-        fgStrong:    [0.870, 0.050, 85],
-        fgMuted:     [0.630, 0.040, 195],
-        border:      [0.355, 0.040, 195],
-        link:        [0.700, 0.130, 250],
-        codeBg:      [0.205, 0.040, 195],
-      },
-      {
-        id: 'paper-dark',
-        name: 'Paper Dark',
-        ref: 'Kindle warmth inverted',
-        bg:          [0.180, 0.018, 75],
-        bgElevated:  [0.225, 0.020, 75],
-        fg:          [0.900, 0.022, 80],
-        fgStrong:    [0.965, 0.025, 80],
-        fgMuted:     [0.730, 0.022, 80],
-        border:      [0.290, 0.020, 75],
-        link:        [0.810, 0.130, 35],
-        codeBg:      [0.250, 0.020, 75],
-      },
-      {
-        id: 'forest',
-        name: 'Forest',
-        ref: 'Pine at twilight',
-        bg:          [0.145, 0.022, 150],
-        bgElevated:  [0.190, 0.024, 150],
-        fg:          [0.830, 0.058, 148],
-        fgStrong:    [0.910, 0.062, 148],
-        fgMuted:     [0.660, 0.050, 148],
-        border:      [0.250, 0.030, 148],
-        link:        [0.820, 0.090, 130],
-        codeBg:      [0.215, 0.026, 148],
-      },
-      {
-        id: 'dusk',
-        name: 'Dusk',
-        ref: 'Last light on desert',
-        bg:          [0.170, 0.022, 28],
-        bgElevated:  [0.215, 0.024, 28],
-        fg:          [0.870, 0.034, 28],
-        fgStrong:    [0.940, 0.036, 28],
-        fgMuted:     [0.690, 0.030, 28],
-        border:      [0.280, 0.026, 28],
-        link:        [0.800, 0.130, 22],
-        codeBg:      [0.240, 0.026, 28],
-      },
+      { id: 'nokia', name: 'Nokia Amber', ref: 'Nokia 3310 LCD, 2000',
+        bg:[0.080,0.012,60], bgElevated:[0.115,0.014,60],
+        fg:[0.760,0.140,80], fgStrong:[0.870,0.150,80], fgMuted:[0.620,0.110,80],
+        border:[0.200,0.040,75], link:[0.820,0.140,65], codeBg:[0.150,0.025,70] },
+      { id: 'warm-slate', name: 'Warm Slate', ref: 'Off-white on warm dark',
+        bg:[0.150,0.012,65], bgElevated:[0.195,0.014,65],
+        fg:[0.870,0.018,75], fgStrong:[0.950,0.020,75], fgMuted:[0.700,0.020,75],
+        border:[0.260,0.014,65], link:[0.780,0.110,60], codeBg:[0.220,0.014,65] },
+      { id: 'solarized', name: 'Solarized Dark', ref: 'Ethan Schoonover, 2011',
+        bg:[0.245,0.040,195], bgElevated:[0.285,0.038,195],
+        fg:[0.770,0.045,85], fgStrong:[0.870,0.050,85], fgMuted:[0.630,0.040,195],
+        border:[0.355,0.040,195], link:[0.700,0.130,250], codeBg:[0.205,0.040,195] },
+      { id: 'paper-dark', name: 'Paper Dark', ref: 'Kindle warmth inverted',
+        bg:[0.180,0.018,75], bgElevated:[0.225,0.020,75],
+        fg:[0.900,0.022,80], fgStrong:[0.965,0.025,80], fgMuted:[0.730,0.022,80],
+        border:[0.290,0.020,75], link:[0.810,0.130,35], codeBg:[0.250,0.020,75] },
+      { id: 'forest', name: 'Forest', ref: 'Pine at twilight',
+        bg:[0.145,0.022,150], bgElevated:[0.190,0.024,150],
+        fg:[0.830,0.058,148], fgStrong:[0.910,0.062,148], fgMuted:[0.660,0.050,148],
+        border:[0.250,0.030,148], link:[0.820,0.090,130], codeBg:[0.215,0.026,148] },
+      { id: 'dusk', name: 'Dusk', ref: 'Last light on desert',
+        bg:[0.170,0.022,28], bgElevated:[0.215,0.024,28],
+        fg:[0.870,0.034,28], fgStrong:[0.940,0.036,28], fgMuted:[0.690,0.030,28],
+        border:[0.280,0.026,28], link:[0.800,0.130,22], codeBg:[0.240,0.026,28] },
     ];
 
     // ========================================================================
-    // MARKDOWN CONTENT / awesome-list format, on-theme
+    // SCENES (ambient viewing conditions)
     // ========================================================================
-    const MARKDOWN = `# Awesome Readable Design
+    const SCENES = [
+      { id: 'studio',  label: 'Studio',         brightness: 100, cast: 'transparent',                     castAmt: 0,    color: 'oklch(72% 0.02 70)' },
+      { id: 'kitchen', label: '8am kitchen',    brightness: 50,  cast: 'oklch(60% 0.08 230)',             castAmt: 0.14, color: 'oklch(70% 0.10 230)' },
+      { id: 'office',  label: 'Office floor',   brightness: 70,  cast: 'oklch(60% 0.05 200)',             castAmt: 0.10, color: 'oklch(72% 0.06 200)' },
+      { id: 'flight',  label: 'Flight, night',  brightness: 30,  cast: 'oklch(40% 0.04 260)',             castAmt: 0.18, color: 'oklch(55% 0.08 260)' },
+      { id: 'bedroom', label: '10pm bedroom',   brightness: 35,  cast: 'oklch(45% 0.10 40)',              castAmt: 0.16, color: 'oklch(70% 0.13 40)' },
+      { id: 'noon',    label: 'Noon outside',   brightness: 100, cast: 'oklch(96% 0.04 80)',              castAmt: 0.12, color: 'oklch(88% 0.08 85)' },
+    ];
+
+    // ========================================================================
+    // CONTENT MODULES
+    // ========================================================================
+    const MARKDOWN_README = `# Awesome Readable Design
 
 > A curated list of things that get contrast right. Inclusion criteria: passes AAA at low device brightness, calibrated for non-ideal viewing, ships in production.
 
@@ -1214,10 +2042,10 @@
 
 ## Contents
 
-- [Brands that ship calibrated dark mode](#brands-that-ship-calibrated-dark-mode)
+- [Brands that ship calibrated dark mode](#brands)
 - [Tools](#tools)
-- [Books and essays](#books-and-essays)
-- [Hardware references](#hardware-references)
+- [Books and essays](#books)
+- [Hardware references](#hardware)
 - [Color systems](#color-systems)
 
 ## Brands that ship calibrated dark mode
@@ -1235,14 +2063,12 @@ Real production examples. None use pure \`#000000\` for surfaces or pure \`#ffff
 2. [APCA Contrast](https://www.myndex.com/APCA) - Successor to WCAG 2.x. Accounts for perceptual contrast and font weight.
 3. [OKLCH Color Picker](https://oklch.com) by Evil Martians - Pick perceptually uniform colors without the HSL math.
 4. [Polypane](https://polypane.app) - Real-time accessibility testing across multiple viewports and color schemes.
-5. [Realtime Colors](https://realtimecolors.com) - Live preview your palette on a working interface, not just swatches.
 
 ## Books and essays
 
 - *The Elements of Typographic Style* by Robert Bringhurst (1992) - Chapter 4 on optical adjustments still beats most contemporary writing on UI.
 - *Designing Visual Interfaces* by Mullet and Sano (1995) - The chapter on **value contrast** could have been written for OLED.
 - *Practical Typography* by Matthew Butterick (online, ongoing) - Free, opinionated, correct on almost everything.
-- [*The thing with leather sleeves*](https://stuffandnonsense.co.uk/blog) by Andy Clarke - Long-running notes on web typography.
 
 ## Hardware references
 
@@ -1255,80 +2081,272 @@ Real production examples. None use pure \`#000000\` for surfaces or pure \`#ffff
 
 ## Color systems
 
-- **Solarized** (2011) - Single-hue palette, equal CIELAB distances between values. Famously lower contrast than WCAG demands.
+- **Solarized** (2011) - Single-hue palette, equal CIELAB distances between values.
 - **Tailwind 3.x** (2017) - Perceptual lightness across hues. The 950 step exists because 900 wasn't dark enough.
 - **Radix Colors** (2022) - 12-step scales with explicit semantic roles. Dark mode is its own scale, not an inversion.
 - **OKLCH** (2020) - Perceptually uniform replacement for HSL. Now native in CSS.
 
-> "The best dark mode is the one you don't have to fight at eight in the morning." \`— a designer who has been through this\`
+> "The best dark mode is the one you don't have to fight at eight in the morning." \`a designer who has been through this\`
 
 ---
 
-*This list is opinionated. Pull requests welcome at the source, which does not actually exist, because this list is a demo for a single-page contrast check artifact.*
+*This list is opinionated. Pull requests welcome at the source, which does not exist, because this list is a demo.*
 `;
 
-    // ========================================================================
-    // TINY MARKDOWN PARSER / handles what awesome-lists need
-    // ========================================================================
-    function escapeHtml(s) {
-      return s.replace(/[&<>"']/g, (c) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[c]));
+    const COMPACT_MD = `### Awesome Readable Design
+
+A curated list of things that get contrast right. Inclusion criteria: passes AAA at low brightness, ships in production.
+
+- [Linear](https://linear.app) - Surfaces sit at \`oklch(18%)\`.
+- [Obsidian](https://obsidian.md) - AAA across every pane.
+- [Kindle Paperwhite](https://amazon.com) - Warm frontlight.
+
+> "The best dark mode is the one you don't have to fight at eight in the morning."`;
+
+    function renderDashboard() {
+      return `
+        <div class="mock-app">
+          <aside class="mock-sidebar">
+            <div class="mock-app-name">
+              <span class="app-mark">A</span>
+              <span>Atlas</span>
+            </div>
+            <nav class="mock-nav">
+              <a class="active" href="#">
+                <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+                  <path d="M2 4l6 4 6-4M2 4v8h12V4M2 4l6-2 6 2" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                </svg>
+                Inbox <span class="badge">3</span>
+              </a>
+              <a href="#">
+                <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+                  <rect x="2" y="3" width="12" height="10" rx="1" stroke="currentColor" stroke-width="1.4"/>
+                  <path d="M2 6h12" stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+                Projects
+              </a>
+              <a href="#">
+                <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+                  <rect x="2" y="3" width="12" height="11" rx="1" stroke="currentColor" stroke-width="1.4"/>
+                  <path d="M2 6h12M5 2v3M11 2v3" stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+                Calendar
+              </a>
+              <a href="#">
+                <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 1l1.5 4.5L14 7l-3.5 2.5L12 14l-4-2.5L4 14l1.5-4.5L2 7l4.5-1.5L8 1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                </svg>
+                Automations
+              </a>
+              <a href="#">
+                <svg class="nav-icon" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.4"/>
+                  <path d="M8 1v3M8 12v3M1 8h3M12 8h3M3 3l2 2M11 11l2 2M3 13l2-2M11 5l2-2" stroke="currentColor" stroke-width="1.4"/>
+                </svg>
+                Settings
+              </a>
+            </nav>
+            <div class="mock-workspace">
+              <div class="ws-name">Heliotrope Studio</div>
+              <div class="ws-meta">12 members &middot; Pro</div>
+            </div>
+          </aside>
+          <main class="mock-main">
+            <header>
+              <h1>Good morning, Akhilesh</h1>
+              <p>Three things on your plate today. The week is calmer than last.</p>
+            </header>
+            <div class="mock-stats">
+              <div class="stat">
+                <span class="stat-label">Open issues</span>
+                <span class="stat-value">14</span>
+                <span class="stat-trend">+2 since Friday</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Reviews waiting</span>
+                <span class="stat-value">3</span>
+                <span class="stat-trend">2 you, 1 team</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Deploy queue</span>
+                <span class="stat-value">0</span>
+                <span class="stat-trend good">All clear</span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">SLA breaches</span>
+                <span class="stat-value">0</span>
+                <span class="stat-trend">7-day window</span>
+              </div>
+            </div>
+            <section class="mock-list">
+              <h2>Today</h2>
+              <div class="task">
+                <span class="task-status in-review"></span>
+                <span class="task-id">CON-114</span>
+                <span class="task-title">Calibrate fallback theme for OLED at low brightness</span>
+                <span class="task-meta">Due today &middot; 2 reviewers</span>
+              </div>
+              <div class="task">
+                <span class="task-status open"></span>
+                <span class="task-id">CON-118</span>
+                <span class="task-title">Replace pure-white toast text with theme foreground</span>
+                <span class="task-meta">Due tomorrow</span>
+              </div>
+              <div class="task">
+                <span class="task-status open"></span>
+                <span class="task-id">CON-121</span>
+                <span class="task-title">Audit color tokens for APCA compliance</span>
+                <span class="task-meta">No due date</span>
+              </div>
+              <div class="task">
+                <span class="task-status done"></span>
+                <span class="task-id">CON-099</span>
+                <span class="task-title">Migrate palette from HSL to OKLCH</span>
+                <span class="task-meta">Closed yesterday</span>
+              </div>
+              <div class="task">
+                <span class="task-status done"></span>
+                <span class="task-id">CON-087</span>
+                <span class="task-title">Brand audit: dark mode landing page</span>
+                <span class="task-meta">Closed last week</span>
+              </div>
+            </section>
+          </main>
+        </div>
+      `;
     }
 
+    function renderSettings() {
+      const swatches = THEMES.map(t => `
+        <div class="theme-pick ${t.id === window.__currentThemeId ? 'active' : ''}"
+             style="background: ${oklchCss(t.bg)}; color: ${oklchCss(t.fg)};"
+             title="${t.name}">${t.name.split(' ')[0]}</div>
+      `).join('');
+
+      return `
+        <div class="mock-settings">
+          <div class="mock-settings-wrap">
+            <header>
+              <h1>Appearance</h1>
+              <p>Set how Atlas looks across your devices. Changes apply instantly.</p>
+            </header>
+            <div class="settings-tabs">
+              <button class="settings-tab">Account</button>
+              <button class="settings-tab active">Appearance</button>
+              <button class="settings-tab">Notifications</button>
+              <button class="settings-tab">Billing</button>
+            </div>
+
+            <div class="setting-group">
+              <h2>Theme</h2>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <strong>Color scheme</strong>
+                  <span>Atlas picks one of these six when system dark mode is on.</span>
+                </div>
+              </div>
+              <div class="theme-picker">${swatches}</div>
+            </div>
+
+            <div class="setting-group">
+              <h2>Brightness behavior</h2>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <strong>Match device brightness</strong>
+                  <span>Reduces saturation as the screen dims. Recommended.</span>
+                </div>
+                <div class="setting-control">
+                  <div class="ui-toggle on"></div>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <strong>Switch to True Tone palette below 30%</strong>
+                  <span>Atlas warms the whites to match ambient light.</span>
+                </div>
+                <div class="setting-control">
+                  <div class="ui-toggle on"></div>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <strong>Allow community themes</strong>
+                  <span>Only themes that pass AAA at default body size will appear.</span>
+                </div>
+                <div class="setting-control">
+                  <div class="ui-toggle"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="setting-group">
+              <h2>Typography</h2>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <strong>Font family</strong>
+                  <span>Used everywhere in Atlas.</span>
+                </div>
+                <div class="setting-control">
+                  <select class="ui-select">
+                    <option>Atkinson Hyperlegible</option>
+                    <option>System default</option>
+                    <option>Inter</option>
+                  </select>
+                </div>
+              </div>
+              <div class="setting-row">
+                <div class="setting-info">
+                  <strong>Reading width</strong>
+                  <span>Comfortable measure is 65 to 75 characters per line.</span>
+                </div>
+                <div class="setting-control">
+                  <select class="ui-select">
+                    <option>72ch</option>
+                    <option>65ch</option>
+                    <option>Fluid</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="save-bar">
+              <button class="mock-btn">Cancel</button>
+              <button class="mock-btn primary">Save changes</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // ========================================================================
+    // MARKDOWN PARSER
+    // ========================================================================
+    function escapeHtml(s) {
+      return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
     function parseInline(text) {
       let out = escapeHtml(text);
-      // Images: ![alt](url)
-      out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) =>
-        `<img src="${url}" alt="${alt}" loading="lazy" />`
-      );
-      // Links: [text](url)
-      out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) =>
-        `<a href="${url}" rel="noopener" target="_blank">${label}</a>`
-      );
-      // Bold: **text**
+      out = out.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (_, alt, url) => `<img src="${url}" alt="${alt}" loading="lazy" />`);
+      out = out.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => `<a href="${url}" rel="noopener" target="_blank">${label}</a>`);
       out = out.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      // Italic: *text*
       out = out.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-      // Inline code: `text`
       out = out.replace(/`([^`]+)`/g, '<code>$1</code>');
       return out;
     }
-
     function parseMarkdown(md) {
       const lines = md.split('\n');
       const out = [];
       let i = 0;
-
-      const flushList = (items, ordered, depth) => {
-        const tag = ordered ? 'ol' : 'ul';
-        out.push(`<${tag}>${items.map(item => `<li>${parseInline(item)}</li>`).join('')}</${tag}>`);
-      };
-
       while (i < lines.length) {
         const line = lines[i];
         const trimmed = line.trim();
-
-        // Empty
         if (!trimmed) { i++; continue; }
-
-        // Headings
         const heading = trimmed.match(/^(#{1,6})\s+(.+)$/);
         if (heading) {
-          const level = heading[1].length;
-          out.push(`<h${level}>${parseInline(heading[2])}</h${level}>`);
-          i++;
-          continue;
+          out.push(`<h${heading[1].length}>${parseInline(heading[2])}</h${heading[1].length}>`);
+          i++; continue;
         }
-
-        // HR
-        if (/^---+$/.test(trimmed)) {
-          out.push('<hr />');
-          i++;
-          continue;
-        }
-
-        // Blockquote
+        if (/^---+$/.test(trimmed)) { out.push('<hr />'); i++; continue; }
         if (trimmed.startsWith('>')) {
           const quoteLines = [];
           while (i < lines.length && lines[i].trim().startsWith('>')) {
@@ -1338,15 +2356,12 @@ Real production examples. None use pure \`#000000\` for surfaces or pure \`#ffff
           out.push(`<blockquote><p>${parseInline(quoteLines.join(' '))}</p></blockquote>`);
           continue;
         }
-
-        // Tables
         if (trimmed.includes('|') && i + 1 < lines.length && /^\s*\|?\s*:?-+/.test(lines[i + 1])) {
           const headerCells = trimmed.split('|').map(c => c.trim()).filter(Boolean);
-          i += 2; // skip header and separator
+          i += 2;
           const rows = [];
           while (i < lines.length && lines[i].trim().includes('|')) {
-            const cells = lines[i].trim().split('|').map(c => c.trim()).filter(Boolean);
-            rows.push(cells);
+            rows.push(lines[i].trim().split('|').map(c => c.trim()).filter(Boolean));
             i++;
           }
           const thead = `<thead><tr>${headerCells.map(c => `<th>${parseInline(c)}</th>`).join('')}</tr></thead>`;
@@ -1354,37 +2369,29 @@ Real production examples. None use pure \`#000000\` for surfaces or pure \`#ffff
           out.push(`<table>${thead}${tbody}</table>`);
           continue;
         }
-
-        // Unordered list
         if (/^[-*]\s+/.test(trimmed)) {
           const items = [];
           while (i < lines.length && /^[-*]\s+/.test(lines[i].trim())) {
             items.push(lines[i].trim().replace(/^[-*]\s+/, ''));
             i++;
           }
-          flushList(items, false);
+          out.push(`<ul>${items.map(it => `<li>${parseInline(it)}</li>`).join('')}</ul>`);
           continue;
         }
-
-        // Ordered list
         if (/^\d+\.\s+/.test(trimmed)) {
           const items = [];
           while (i < lines.length && /^\d+\.\s+/.test(lines[i].trim())) {
             items.push(lines[i].trim().replace(/^\d+\.\s+/, ''));
             i++;
           }
-          flushList(items, true);
+          out.push(`<ol>${items.map(it => `<li>${parseInline(it)}</li>`).join('')}</ol>`);
           continue;
         }
-
-        // Paragraph (may contain image-only lines that should become a badges row)
         const paraLines = [];
         while (i < lines.length && lines[i].trim() && !/^(#{1,6}\s|[-*]\s+|\d+\.\s+|---+$|>)/.test(lines[i].trim())) {
-          paraLines.push(lines[i]);
-          i++;
+          paraLines.push(lines[i]); i++;
         }
         const paraText = paraLines.join(' ');
-        // If paragraph is only images, render as badges row
         const stripped = paraText.replace(/!\[[^\]]*\]\([^)]+\)/g, '').trim();
         if (paraLines.length && !stripped) {
           out.push(`<p class="badges-row">${parseInline(paraText)}</p>`);
@@ -1392,32 +2399,49 @@ Real production examples. None use pure \`#000000\` for surfaces or pure \`#ffff
           out.push(`<p>${parseInline(paraText)}</p>`);
         }
       }
-
       return out.join('\n');
+    }
+
+    const PARSED_README = parseMarkdown(MARKDOWN_README);
+    const PARSED_COMPACT = parseMarkdown(COMPACT_MD);
+
+    // ========================================================================
+    // STATE
+    // ========================================================================
+    const state = {
+      themeId: 'nokia',
+      content: 'readme',
+      scene: 'studio',
+      vision: 'normal',
+      brightness: 100,
+      customize: false,
+      customTheme: null,
+    };
+
+    function activeTheme() {
+      if (state.customTheme) return state.customTheme;
+      return THEMES.find(t => t.id === state.themeId) || THEMES[0];
+    }
+
+    function deriveTheme(base) {
+      // Given base fg, bg, link, derive the remaining color roles.
+      const [fL, fC, fH] = base.fg;
+      const [bL, bC, bH] = base.bg;
+      const [lL, lC, lH] = base.link;
+      return {
+        ...base,
+        fgStrong:   [Math.min(0.99, fL + 0.07), fC, fH],
+        fgMuted:    [Math.max(0.30, fL - 0.16), Math.max(0, fC * 0.6), fH],
+        border:     [Math.min(0.95, bL + 0.10), Math.max(0, bC * 0.7), bH],
+        bgElevated: [Math.min(0.95, bL + 0.05), bC, bH],
+        codeBg:     [Math.min(0.95, bL + 0.08), bC, bH],
+      };
     }
 
     // ========================================================================
     // RENDERING
     // ========================================================================
-    const PARSED_HTML = parseMarkdown(MARKDOWN);
-
-    // Compact excerpt for compare-mode columns and gallery card previews
-    const COMPACT_HTML = (() => {
-      const md = `### Awesome Readable Design
-
-A curated list of things that get contrast right. Inclusion criteria: passes AAA at low brightness, ships in production.
-
-- [Linear](https://linear.app) - Surfaces sit at \`oklch(18%)\`, never deeper.
-- [Obsidian](https://obsidian.md) - Default theme reads at AAA across every pane.
-- [Kindle Paperwhite](https://amazon.com) - Warm frontlight, paper-like reflectance.
-
-> "The best dark mode is the one you don't have to fight at eight in the morning."`;
-      return parseMarkdown(md);
-    })();
-
-    function applyTheme(theme, target) {
-      const ratio = contrastRatio(theme.fg, theme.bg);
-      const ratioMuted = contrastRatio(theme.fgMuted, theme.bg);
+    function applyThemeVars(theme, target) {
       target.style.setProperty('--theme-bg', oklchCss(theme.bg));
       target.style.setProperty('--theme-bg-elevated', oklchCss(theme.bgElevated));
       target.style.setProperty('--theme-fg', oklchCss(theme.fg));
@@ -1426,7 +2450,6 @@ A curated list of things that get contrast right. Inclusion criteria: passes AAA
       target.style.setProperty('--theme-border', oklchCss(theme.border));
       target.style.setProperty('--theme-link', oklchCss(theme.link));
       target.style.setProperty('--theme-code-bg', oklchCss(theme.codeBg));
-      return { ratio, ratioMuted };
     }
 
     function renderGallery() {
@@ -1442,14 +2465,12 @@ A curated list of things that get contrast right. Inclusion criteria: passes AAA
         card.setAttribute('aria-selected', idx === 0 ? 'true' : 'false');
         card.style.setProperty('--card-bg', oklchCss(theme.bg));
         card.style.setProperty('--card-fg', oklchCss(theme.fg));
-        card.style.setProperty('--card-fg-muted', oklchCss(theme.fgMuted));
         card.style.setProperty('--card-link', oklchCss(theme.link));
-
         card.innerHTML = `
           <div class="swatch">
             <h4>${theme.name}</h4>
             <p>The quick brown fox jumps over the lazy dog, again and again.</p>
-            <p><a class="demo-link">Read more</a> &middot; <span style="opacity:0.7">draft</span></p>
+            <p><a class="demo-link">Read more</a></p>
           </div>
           <div class="meta">
             <div class="name-block">
@@ -1467,39 +2488,60 @@ A curated list of things that get contrast right. Inclusion criteria: passes AAA
       });
     }
 
-    function selectTheme(themeId) {
-      const theme = THEMES.find(t => t.id === themeId);
-      if (!theme) return;
+    function renderContent() {
+      const mount = document.getElementById('content-mount');
+      const theme = activeTheme();
+      if (state.content === 'readme') {
+        mount.innerHTML = `<div class="prose-container"><article class="prose">${PARSED_README}</article></div>`;
+      } else if (state.content === 'dashboard') {
+        window.__currentThemeId = state.themeId;
+        mount.innerHTML = renderDashboard();
+      } else if (state.content === 'settings') {
+        window.__currentThemeId = state.themeId;
+        mount.innerHTML = renderSettings();
+      }
+      applyThemeVars(theme, document.getElementById('reading-panel'));
+    }
 
-      // Update gallery selection
-      document.querySelectorAll('.theme-card').forEach(c => {
-        c.setAttribute('aria-selected', c.dataset.themeId === themeId ? 'true' : 'false');
-      });
-
-      // Reading panel
-      const panel = document.getElementById('reading-panel');
-      const proseContainer = document.getElementById('prose-container');
-      const prose = document.getElementById('prose');
-      const { ratio } = applyTheme(theme, panel);
+    function renderCurrentTheme() {
+      const theme = activeTheme();
+      const ratio = contrastRatio(theme.fg, theme.bg);
       const level = wcagLevel(ratio);
-      prose.innerHTML = PARSED_HTML;
+      const lc = apcaContrast(theme.fg, theme.bg);
 
-      // Frame meta
-      document.getElementById('panel-frame-meta').textContent = `${theme.id} / README.md`;
-      document.getElementById('panel-frame-ratio').textContent = `${ratio.toFixed(2)} : 1  ${level.label}`;
+      document.getElementById('current-name').textContent = state.customTheme ? 'Custom' : theme.name;
+      document.getElementById('current-ratio').textContent = `${ratio.toFixed(2)} : 1`;
+      document.getElementById('current-level').textContent = level.label;
+      document.getElementById('current-apca').textContent = `Lc ${lc.toFixed(0)}`;
 
-      // Current theme indicator
-      document.getElementById('current-name').textContent = theme.name;
-      const swatchDot = document.getElementById('current-swatch');
-      swatchDot.style.background = oklchCss(theme.fg);
-      swatchDot.style.boxShadow = `inset 0 0 0 4px ${oklchCss(theme.bg)}`;
+      const swatch = document.getElementById('current-swatch');
+      swatch.style.background = oklchCss(theme.fg);
+      swatch.style.boxShadow = `inset 0 0 0 4px ${oklchCss(theme.bg)}`;
+
+      document.getElementById('panel-frame-meta').textContent =
+        `${theme.id || 'custom'} / ${state.content === 'readme' ? 'README.md' : state.content + '.html'}`;
+      document.getElementById('panel-frame-ratio').textContent =
+        `${ratio.toFixed(2)} : 1  ${level.label}  Lc ${lc.toFixed(0)}`;
+
+      applyThemeVars(theme, document.getElementById('reading-panel'));
 
       // Compare middle column
       const colActive = document.getElementById('col-active');
-      applyTheme(theme, colActive);
-      document.getElementById('col-active-name').textContent = theme.name;
+      applyThemeVars(theme, colActive);
+      document.getElementById('col-active-name').textContent = state.customTheme ? 'Custom' : theme.name;
       document.getElementById('col-active-ratio').textContent = `${ratio.toFixed(2)} : 1`;
-      document.getElementById('col-active-content').innerHTML = COMPACT_HTML;
+      document.getElementById('col-active-content').innerHTML = PARSED_COMPACT;
+    }
+
+    function selectTheme(themeId) {
+      state.themeId = themeId;
+      state.customTheme = null;
+      document.querySelectorAll('.theme-card').forEach(c => {
+        c.setAttribute('aria-selected', c.dataset.themeId === themeId ? 'true' : 'false');
+      });
+      renderContent();
+      renderCurrentTheme();
+      syncCustomizeInputs();
     }
 
     function setupCompareColumns() {
@@ -1513,9 +2555,8 @@ A curated list of things that get contrast right. Inclusion criteria: passes AAA
       colDark.style.setProperty('--theme-border', '#222222');
       colDark.style.setProperty('--theme-link', '#5599ff');
       colDark.style.setProperty('--theme-code-bg', '#111111');
-      document.getElementById('col-dark-content').innerHTML = COMPACT_HTML;
+      document.getElementById('col-dark-content').innerHTML = PARSED_COMPACT;
 
-      // True Light
       const colLight = document.getElementById('col-light');
       colLight.style.setProperty('--theme-bg', '#ffffff');
       colLight.style.setProperty('--theme-bg-elevated', '#f4f4f4');
@@ -1525,21 +2566,89 @@ A curated list of things that get contrast right. Inclusion criteria: passes AAA
       colLight.style.setProperty('--theme-border', '#dddddd');
       colLight.style.setProperty('--theme-link', '#0044cc');
       colLight.style.setProperty('--theme-code-bg', '#f0f0f0');
-      document.getElementById('col-light-content').innerHTML = COMPACT_HTML;
+      document.getElementById('col-light-content').innerHTML = PARSED_COMPACT;
+    }
+
+    // ========================================================================
+    // CONTROLS
+    // ========================================================================
+    function setupContentTabs() {
+      document.querySelectorAll('#content-tabs .tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+          const content = tab.dataset.content;
+          state.content = content;
+          document.querySelectorAll('#content-tabs .tab').forEach(t => {
+            t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+          });
+          renderContent();
+          renderCurrentTheme();
+        });
+      });
+    }
+
+    function setupScenes() {
+      const wrap = document.getElementById('scene-chips');
+      wrap.innerHTML = '';
+      SCENES.forEach(scene => {
+        const btn = document.createElement('button');
+        btn.className = 'chip';
+        btn.dataset.scene = scene.id;
+        btn.setAttribute('aria-pressed', scene.id === state.scene ? 'true' : 'false');
+        btn.style.setProperty('--chip-color', scene.color);
+        btn.innerHTML = `<span class="dot"></span>${scene.label}`;
+        btn.addEventListener('click', () => applyScene(scene.id));
+        wrap.appendChild(btn);
+      });
+    }
+
+    function applyScene(sceneId) {
+      const scene = SCENES.find(s => s.id === sceneId) || SCENES[0];
+      state.scene = sceneId;
+      state.brightness = scene.brightness;
+      document.querySelectorAll('#scene-chips .chip').forEach(c => {
+        c.setAttribute('aria-pressed', c.dataset.scene === sceneId ? 'true' : 'false');
+      });
+      document.documentElement.style.setProperty('--device-brightness', String(scene.brightness / 100));
+      document.documentElement.style.setProperty('--scene-cast', scene.cast);
+      document.documentElement.style.setProperty('--scene-cast-amt', String(scene.castAmt));
+      const slider = document.getElementById('brightness-slider');
+      slider.value = scene.brightness;
+      document.getElementById('brightness-value').textContent = `${scene.brightness}%`;
     }
 
     function setupBrightness() {
       const slider = document.getElementById('brightness-slider');
       const valueLabel = document.getElementById('brightness-value');
-      const onInput = () => {
+      slider.addEventListener('input', () => {
         const value = Number(slider.value);
+        state.brightness = value;
         valueLabel.textContent = `${value}%`;
         slider.setAttribute('aria-valuetext', `${value} percent`);
-        const filterValue = value / 100;
-        document.documentElement.style.setProperty('--device-brightness', String(filterValue));
-      };
-      slider.addEventListener('input', onInput);
-      onInput();
+        document.documentElement.style.setProperty('--device-brightness', String(value / 100));
+        // If manually changed, set scene to "studio" unless current scene matches
+        const scene = SCENES.find(s => s.id === state.scene);
+        if (!scene || scene.brightness !== value) {
+          state.scene = null;
+          document.querySelectorAll('#scene-chips .chip').forEach(c => {
+            c.setAttribute('aria-pressed', 'false');
+          });
+        }
+      });
+    }
+
+    function setupVision() {
+      document.querySelectorAll('#vision-chips .chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          const vision = chip.dataset.vision;
+          state.vision = vision;
+          document.querySelectorAll('#vision-chips .chip').forEach(c => {
+            c.setAttribute('aria-pressed', c === chip ? 'true' : 'false');
+          });
+          const panel = document.getElementById('reading-panel');
+          panel.classList.remove('vision-normal', 'vision-deutan', 'vision-protan', 'vision-tritan');
+          panel.classList.add(`vision-${vision}`);
+        });
+      });
     }
 
     function setupCompareToggle() {
@@ -1549,14 +2658,267 @@ A curated list of things that get contrast right. Inclusion criteria: passes AAA
         const isOpen = wrap.getAttribute('data-open') === 'true';
         wrap.setAttribute('data-open', String(!isOpen));
         btn.setAttribute('aria-pressed', String(!isOpen));
-        btn.querySelector('span').textContent = isOpen
-          ? 'Compare to dark & light'
-          : 'Hide comparison';
+        btn.querySelector('span').textContent = isOpen ? 'Compare' : 'Hide compare';
         if (!isOpen) {
-          requestAnimationFrame(() => {
-            wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          });
+          requestAnimationFrame(() => wrap.scrollIntoView({ behavior: 'smooth', block: 'start' }));
         }
+      });
+    }
+
+    // ========================================================================
+    // CUSTOMIZE
+    // ========================================================================
+    function syncCustomizeInputs() {
+      const theme = activeTheme();
+      const roles = ['fg', 'bg', 'link'];
+      roles.forEach(role => {
+        const [L, C, H] = theme[role];
+        document.getElementById(`cust-${role}-l`).value = (L * 100).toFixed(1);
+        document.getElementById(`cust-${role}-c`).value = C.toFixed(3);
+        document.getElementById(`cust-${role}-h`).value = H.toFixed(0);
+        document.getElementById(`cust-${role}-l-val`).textContent = (L * 100).toFixed(0);
+        document.getElementById(`cust-${role}-c-val`).textContent = C.toFixed(2);
+        document.getElementById(`cust-${role}-h-val`).textContent = H.toFixed(0);
+        const sw = document.getElementById(`cust-${role}-swatch`);
+        if (sw) sw.style.background = oklchCss(theme[role]);
+      });
+      updateCustomizeReadout();
+    }
+
+    function readCustomizeInputs() {
+      const get = (role) => [
+        Number(document.getElementById(`cust-${role}-l`).value) / 100,
+        Number(document.getElementById(`cust-${role}-c`).value),
+        Number(document.getElementById(`cust-${role}-h`).value),
+      ];
+      const base = {
+        id: null,
+        name: 'Custom',
+        ref: 'Custom theme',
+        fg: get('fg'),
+        bg: get('bg'),
+        link: get('link'),
+      };
+      return deriveTheme(base);
+    }
+
+    function updateCustomizeReadout() {
+      const theme = activeTheme();
+      const ratio = contrastRatio(theme.fg, theme.bg);
+      const level = wcagLevel(ratio);
+      const lc = apcaContrast(theme.fg, theme.bg);
+      const apca = apcaLevel(lc);
+      const ratioEl = document.getElementById('cust-ratio');
+      const levelEl = document.getElementById('cust-level');
+      const apcaEl = document.getElementById('cust-apca');
+      const apcaStEl = document.getElementById('cust-apca-status');
+      if (ratioEl) {
+        ratioEl.textContent = `${ratio.toFixed(2)} : 1`;
+        levelEl.textContent = level.label;
+        levelEl.className = `readout-status ${level.class}`;
+        apcaEl.textContent = `${lc.toFixed(0)}`;
+        apcaStEl.textContent = apca.label;
+        apcaStEl.className = `readout-status ${apca.class}`;
+      }
+    }
+
+    function setupCustomize() {
+      const btn = document.getElementById('customize-toggle');
+      const panel = document.getElementById('customize-panel');
+      const layout = document.getElementById('reading-layout');
+
+      btn.addEventListener('click', () => {
+        state.customize = !state.customize;
+        btn.setAttribute('aria-pressed', String(state.customize));
+        panel.hidden = !state.customize;
+        layout.setAttribute('data-customize', String(state.customize));
+        if (state.customize) syncCustomizeInputs();
+      });
+
+      document.getElementById('customize-reset').addEventListener('click', () => {
+        state.customTheme = null;
+        selectTheme(state.themeId);
+      });
+
+      ['fg', 'bg', 'link'].forEach(role => {
+        ['l', 'c', 'h'].forEach(axis => {
+          const input = document.getElementById(`cust-${role}-${axis}`);
+          input.addEventListener('input', () => {
+            const valEl = document.getElementById(`cust-${role}-${axis}-val`);
+            if (axis === 'l') valEl.textContent = Math.round(Number(input.value));
+            else if (axis === 'c') valEl.textContent = Number(input.value).toFixed(2);
+            else valEl.textContent = Math.round(Number(input.value));
+            state.customTheme = readCustomizeInputs();
+            renderContent();
+            renderCurrentTheme();
+            updateCustomizeReadout();
+            // Update the small swatch in panel header
+            ['fg', 'bg', 'link'].forEach(r => {
+              const sw = document.getElementById(`cust-${r}-swatch`);
+              if (sw) sw.style.background = oklchCss(state.customTheme[r]);
+            });
+          });
+        });
+      });
+    }
+
+    // ========================================================================
+    // TOKEN EXPORT MODAL
+    // ========================================================================
+    function exportCss(theme) {
+      const name = state.customTheme ? 'custom' : theme.id;
+      return `/* ${state.customTheme ? 'Custom theme' : theme.name} */
+:root {
+  --theme-bg:           ${oklchCss(theme.bg)};
+  --theme-bg-elevated:  ${oklchCss(theme.bgElevated)};
+  --theme-fg:           ${oklchCss(theme.fg)};
+  --theme-fg-strong:    ${oklchCss(theme.fgStrong)};
+  --theme-fg-muted:     ${oklchCss(theme.fgMuted)};
+  --theme-border:       ${oklchCss(theme.border)};
+  --theme-link:         ${oklchCss(theme.link)};
+  --theme-code-bg:      ${oklchCss(theme.codeBg)};
+}
+
+/* Fallback hex for older browsers */
+:root {
+  --theme-bg-hex:           ${oklchToHex(theme.bg)};
+  --theme-bg-elevated-hex:  ${oklchToHex(theme.bgElevated)};
+  --theme-fg-hex:           ${oklchToHex(theme.fg)};
+  --theme-fg-strong-hex:    ${oklchToHex(theme.fgStrong)};
+  --theme-fg-muted-hex:     ${oklchToHex(theme.fgMuted)};
+  --theme-border-hex:       ${oklchToHex(theme.border)};
+  --theme-link-hex:         ${oklchToHex(theme.link)};
+  --theme-code-bg-hex:      ${oklchToHex(theme.codeBg)};
+}`;
+    }
+
+    function exportTailwind(theme) {
+      const name = (state.customTheme ? 'custom' : theme.id).replace('-', '');
+      return `// tailwind.config.js
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        ${name}: {
+          bg:        '${oklchToHex(theme.bg)}',
+          surface:   '${oklchToHex(theme.bgElevated)}',
+          fg:        '${oklchToHex(theme.fg)}',
+          'fg-bold': '${oklchToHex(theme.fgStrong)}',
+          muted:     '${oklchToHex(theme.fgMuted)}',
+          border:    '${oklchToHex(theme.border)}',
+          link:      '${oklchToHex(theme.link)}',
+          code:      '${oklchToHex(theme.codeBg)}',
+        },
+      },
+    },
+  },
+};`;
+    }
+
+    function exportJson(theme) {
+      const ratio = contrastRatio(theme.fg, theme.bg);
+      const lc = apcaContrast(theme.fg, theme.bg);
+      return JSON.stringify({
+        name: state.customTheme ? 'Custom' : theme.name,
+        id: state.customTheme ? 'custom' : theme.id,
+        reference: state.customTheme ? null : theme.ref,
+        contrast: {
+          wcag21: Number(ratio.toFixed(2)),
+          wcagLevel: wcagLevel(ratio).label,
+          apcaLc: Number(lc.toFixed(1)),
+          apcaLevel: apcaLevel(lc).label,
+        },
+        colors: {
+          background:        { oklch: oklchCss(theme.bg),         hex: oklchToHex(theme.bg) },
+          backgroundElevated:{ oklch: oklchCss(theme.bgElevated), hex: oklchToHex(theme.bgElevated) },
+          foreground:        { oklch: oklchCss(theme.fg),         hex: oklchToHex(theme.fg) },
+          foregroundStrong:  { oklch: oklchCss(theme.fgStrong),   hex: oklchToHex(theme.fgStrong) },
+          foregroundMuted:   { oklch: oklchCss(theme.fgMuted),    hex: oklchToHex(theme.fgMuted) },
+          border:            { oklch: oklchCss(theme.border),     hex: oklchToHex(theme.border) },
+          link:              { oklch: oklchCss(theme.link),       hex: oklchToHex(theme.link) },
+          codeBackground:    { oklch: oklchCss(theme.codeBg),     hex: oklchToHex(theme.codeBg) },
+        },
+      }, null, 2);
+    }
+
+    function refreshCodeOutput(format) {
+      const theme = activeTheme();
+      const output = document.getElementById('code-output');
+      const codeFns = { css: exportCss, tailwind: exportTailwind, json: exportJson };
+      const code = (codeFns[format] || exportCss)(theme);
+
+      output.innerHTML = '';
+      const pre = document.createElement('div');
+      pre.style.whiteSpace = 'pre-wrap';
+      pre.textContent = code;
+
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'copy-btn';
+      copyBtn.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+          <rect x="4" y="3" width="8" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+          <path d="M3 6v6a2 2 0 002 2h5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+        </svg>
+        Copy
+      `;
+      copyBtn.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(code);
+          copyBtn.classList.add('copied');
+          copyBtn.innerHTML = '✓ Copied';
+          setTimeout(() => {
+            copyBtn.classList.remove('copied');
+            copyBtn.innerHTML = `
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+                <rect x="4" y="3" width="8" height="10" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M3 6v6a2 2 0 002 2h5" stroke="currentColor" stroke-width="1.5" fill="none"/>
+              </svg>
+              Copy
+            `;
+          }, 1600);
+        } catch (e) {
+          copyBtn.textContent = 'Press Ctrl+C';
+        }
+      });
+
+      output.appendChild(copyBtn);
+      output.appendChild(pre);
+    }
+
+    function setupModal() {
+      const backdrop = document.getElementById('token-modal');
+      const openBtn = document.getElementById('copy-tokens');
+      const closeBtn = document.getElementById('modal-close');
+      const subtitle = document.getElementById('modal-subtitle');
+      const tabs = document.querySelectorAll('.modal-tab');
+
+      const close = () => {
+        backdrop.setAttribute('data-open', 'false');
+        document.body.style.overflow = '';
+      };
+
+      openBtn.addEventListener('click', () => {
+        const theme = activeTheme();
+        subtitle.textContent = state.customTheme ? 'Custom theme' : theme.name;
+        const activeFormat = document.querySelector('.modal-tab[aria-selected="true"]').dataset.format;
+        refreshCodeOutput(activeFormat);
+        backdrop.setAttribute('data-open', 'true');
+        document.body.style.overflow = 'hidden';
+      });
+
+      closeBtn.addEventListener('click', close);
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) close();
+      });
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && backdrop.getAttribute('data-open') === 'true') close();
+      });
+
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.setAttribute('aria-selected', t === tab ? 'true' : 'false'));
+          refreshCodeOutput(tab.dataset.format);
+        });
       });
     }
 
@@ -1566,9 +2928,15 @@ A curated list of things that get contrast right. Inclusion criteria: passes AAA
     document.addEventListener('DOMContentLoaded', () => {
       renderGallery();
       setupCompareColumns();
+      setupContentTabs();
+      setupScenes();
       setupBrightness();
+      setupVision();
       setupCompareToggle();
+      setupCustomize();
+      setupModal();
       selectTheme(THEMES[0].id);
+      applyScene('studio');
     });
   </script>
 </body>
